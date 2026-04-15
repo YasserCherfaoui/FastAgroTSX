@@ -3,11 +3,11 @@ import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { redirectIfAuthenticated } from '../lib/auth-guards'
+import { authPageRouteOptions } from '../lib/auth-guards'
 import { useLoginMutation } from '../lib/auth-queries'
 
 export const Route = createFileRoute('/login')({
-  beforeLoad: () => redirectIfAuthenticated(),
+  ...authPageRouteOptions,
   component: LoginPage,
 })
 

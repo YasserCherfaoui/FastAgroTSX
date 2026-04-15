@@ -4,11 +4,11 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { redirectIfAuthenticated } from '../lib/auth-guards'
+import { authPageRouteOptions } from '../lib/auth-guards'
 import { useRegisterMutation } from '../lib/auth-queries'
 
 export const Route = createFileRoute('/register')({
-  beforeLoad: () => redirectIfAuthenticated(),
+  ...authPageRouteOptions,
   component: RegisterPage,
 })
 
