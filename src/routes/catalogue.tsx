@@ -1,13 +1,22 @@
+import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import ProductCard from '../components/ProductCard'
-import { catalogueProducts } from '../data/products'
+import { fetchCatalogueProducts } from '../lib/api'
+import { productToCatalogueCard } from '../models/product'
 
 export const Route = createFileRoute('/catalogue')({
   component: CataloguePage,
 })
 
 function CataloguePage() {
-  const productsFound = catalogueProducts.length
+  const productsQuery = useQuery({
+    queryKey: ['catalogue', 'products', { page: 1, perPage: 12 }],
+    queryFn: () => fetchCatalogueProducts({ page: 1, perPage: 12 }),
+  })
+
+  const items = productsQuery.data?.items ?? []
+  const productsFound = productsQuery.data?.pagination.total_items ?? items.length
+  const cards = items.map(productToCatalogueCard)
 
   return (
     <main className="bg-(--surface) text-(--on-surface) min-h-screen font-sans">
@@ -75,11 +84,13 @@ function CataloguePage() {
               Categories
             </h3>
             <div className="space-y-3">
-              {[
-                ['Legumes frais', '84', true],
-                ['Fruits de saison', '56', false],
-                ['Cereales & Grains', '42', false],
-              ].map(([name, count, checked]) => (
+              {(
+                [
+                  ['Legumes frais', '84', true],
+                  ['Fruits de saison', '56', false],
+                  ['Cereales & Grains', '42', false],
+                ] as const
+              ).map(([name, count, checked]) => (
                 <label key={name} className="group flex cursor-pointer items-center justify-between">
                   <div className="flex items-center gap-3">
                     <input
@@ -204,9 +215,22 @@ function CataloguePage() {
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-            {catalogueProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {productsQuery.isLoading ? (
+              <p className="text-(--on-surface-variant) col-span-full text-center text-sm">
+                Chargement du catalogue…
+              </p>
+            ) : productsQuery.isError ? (
+              <p className="text-(--on-surface-variant) col-span-full text-center text-sm">
+                Impossible de charger les produits. Vérifiez que l&apos;API est disponible
+                {import.meta.env.DEV ? ' (VITE_API_URL ou http://localhost:8080 par défaut)' : ''}.
+              </p>
+            ) : cards.length === 0 ? (
+              <p className="text-(--on-surface-variant) col-span-full text-center text-sm">
+                Aucun produit pour le moment.
+              </p>
+            ) : (
+              cards.map((product) => <ProductCard key={product.id} product={product} />)
+            )}
           </div>
 
           <div className="flex items-center justify-center pt-12">
