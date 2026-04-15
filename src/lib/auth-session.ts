@@ -81,6 +81,16 @@ export function saveAuthSession(token: string, user: StoredUser): void {
   notifyAuthChange()
 }
 
+/**
+ * Writes token + user to storage without firing the auth-change event.
+ * Use after GET /me so AuthSync does not invalidate the session query in a loop.
+ */
+export function persistSessionFromServer(token: string, user: StoredUser): void {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(AUTH_TOKEN_KEY, token)
+  window.localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user))
+}
+
 export function clearAuthSession(): void {
   if (typeof window === 'undefined') return
   window.localStorage.removeItem(AUTH_TOKEN_KEY)

@@ -6,8 +6,31 @@ export type Category = {
   description?: string
   sort_order: number
   is_active: boolean
+  icon_svg?: string
+  parent_id?: number | null
+  parent?: Category | null
+  image_public_url?: string
+  image_bucket_name?: string
+  image_object_name?: string
+  image_file_name?: string
+  image_content_type?: string
+  image_size_bytes?: number
+  /** Non-persisted: set on category list from product counts. */
+  product_count?: number
   created_at: string
   updated_at: string
+}
+
+export type CategoryListPagination = {
+  page: number
+  per_page: number
+  total_items: number
+  total_pages: number
+}
+
+export type CategoryListResponse = {
+  items: Category[]
+  pagination: CategoryListPagination
 }
 
 /** Matches serverside `models.PricingTier`. */

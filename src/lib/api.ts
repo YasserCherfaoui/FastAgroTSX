@@ -1,6 +1,6 @@
 import type { AuthUser } from './auth-session'
 import { getAuthToken } from './auth-session'
-import type { Product, ProductListResponse } from '../models/product'
+import type { CategoryListResponse, Product, ProductListResponse } from '../models/product'
 
 const DEFAULT_API = 'http://localhost:8180'
 
@@ -98,12 +98,41 @@ export async function registerRequest(body: RegisterRequest): Promise<AuthRespon
   return data as AuthResponse
 }
 
+/** Thrown by `fetchMe` so callers can branch on HTTP status (e.g. 401 vs network). */
+export class ApiHttpError extends Error {
+  readonly status: number
+
+  constructor(message: string, status: number) {
+    super(message)
+    this.name = 'ApiHttpError'
+    this.status = status
+  }
+}
+
 export async function fetchMe(): Promise<AuthUser> {
   const res = await fetch(`${getApiBaseUrl()}/api/v1/me`, {
     headers: authJsonHeaders(),
   })
-  if (!res.ok) throw new Error(await readApiError(res))
+  if (!res.ok) {
+    throw new ApiHttpError(await readApiError(res), res.status)
+  }
   return res.json() as Promise<AuthUser>
+}
+
+/** Public category list for the storefront (signed image URLs when applicable). */
+export async function fetchCatalogueCategories(params?: {
+  page?: number
+  perPage?: number
+}): Promise<CategoryListResponse> {
+  const page = params?.page ?? 1
+  const perPage = params?.perPage ?? 100
+  const searchParams = new URLSearchParams({
+    page: String(page),
+    per_page: String(perPage),
+  })
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/catalogue/categories?${searchParams}`)
+  if (!res.ok) throw new Error(await readApiError(res))
+  return res.json() as Promise<CategoryListResponse>
 }
 
 /** Unauthenticated list used by the public catalogue page. */

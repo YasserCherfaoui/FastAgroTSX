@@ -1,18 +1,65 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
+import { Link, createFileRoute } from '@tanstack/react-router'
+import { fetchCatalogueCategories } from '../lib/api'
+import type { Category } from '../models/product'
 
 export const Route = createFileRoute('/')({ component: App })
 
+function formatCategoryProductSubtitle(count: number | undefined): string {
+  const n = count ?? 0
+  if (n === 0) return 'Aucun produit pour le moment'
+  if (n === 1) return '1 Produit disponible'
+  return `${n.toLocaleString('fr-FR')} Produits disponibles`
+}
+
+/** Circular avatar: icon SVG, else cover image, else initial. No background fill. */
+function CategoryAvatar({ category }: { category: Category }) {
+  const imageUrl = category.image_public_url?.trim()
+  const iconSvg = category.icon_svg?.trim()
+
+  const shellClass =
+    'flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full text-[var(--primary)]'
+
+  if (iconSvg) {
+    return (
+      <div
+        className={`${shellClass} [&_svg]:h-9 [&_svg]:w-9 [&_svg]:max-h-full [&_svg]:max-w-full [&_svg]:shrink-0`}
+        dangerouslySetInnerHTML={{ __html: iconSvg }}
+        aria-hidden
+      />
+    )
+  }
+
+  if (imageUrl) {
+    return (
+      <div className={shellClass}>
+        <img
+          src={imageUrl}
+          alt=""
+          className="h-full w-full object-cover"
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className={`${shellClass} text-2xl font-black`}
+      aria-hidden
+    >
+      {category.name.slice(0, 1).toUpperCase()}
+    </div>
+  )
+}
+
 function App() {
-  const categories = [
-    ['Céréales', '45 Produits disponibles'],
-    ['Huiles', '22 Produits disponibles'],
-    ['Légumineuses', '38 Produits disponibles'],
-    ['Conserves', '67 Produits disponibles'],
-    ['Épices', '112 Produits disponibles'],
-    ['Sucre', '14 Produits disponibles'],
-    ['Produits Laitiers', '52 Produits disponibles'],
-    ['Boissons', '89 Produits disponibles'],
-  ]
+  const categoriesQuery = useQuery({
+    queryKey: ['catalogue', 'categories', { page: 1, perPage: 100 }],
+    queryFn: () => fetchCatalogueCategories({ page: 1, perPage: 100 }),
+  })
+
+  const categories =
+    categoriesQuery.data?.items.filter((c) => c.is_active) ?? []
 
   const topProducts = [
     [
@@ -144,16 +191,41 @@ function App() {
             </div>
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {categories.map(([title, subtitle]) => (
-              <article
-                key={title}
-                className="rounded-xl bg-[var(--surface-container-lowest)] p-8 transition duration-200 hover:bg-[var(--primary)] hover:text-[var(--on-primary)]"
-              >
-                <p className="m-0 text-xl font-black">{title}</p>
-                <p className="m-0 mt-3 text-sm text-[var(--on-surface-variant)]">
-                  {subtitle}
+            {categoriesQuery.isLoading && (
+              <p className="col-span-full text-[var(--on-surface-variant)]">
+                Chargement des catégories…
+              </p>
+            )}
+            {categoriesQuery.isError && (
+              <p className="col-span-full text-[var(--on-surface-variant)]">
+                Impossible de charger les catégories pour le moment.
+              </p>
+            )}
+            {!categoriesQuery.isLoading &&
+              !categoriesQuery.isError &&
+              categories.length === 0 && (
+                <p className="col-span-full text-[var(--on-surface-variant)]">
+                  Aucune catégorie disponible.
                 </p>
-              </article>
+              )}
+            {categories.map((cat) => (
+              <Link
+                key={cat.id}
+                to="/catalogue"
+                className="group block rounded-xl bg-[var(--surface-container-lowest)] p-8 no-underline transition duration-200 hover:bg-[var(--primary)] hover:text-[var(--on-primary)]"
+              >
+                <article className="flex items-start gap-5">
+                  <CategoryAvatar category={cat} />
+                  <div className="min-w-0 flex-1">
+                    <p className="m-0 text-xl font-black text-[var(--on-surface)] group-hover:text-[var(--on-primary)]">
+                      {cat.name}
+                    </p>
+                    <p className="m-0 mt-3 text-sm text-[var(--on-surface-variant)] group-hover:text-[color:color-mix(in_oklab,var(--on-primary)_78%,transparent)]">
+                      {formatCategoryProductSubtitle(cat.product_count)}
+                    </p>
+                  </div>
+                </article>
+              </Link>
             ))}
           </div>
         </div>

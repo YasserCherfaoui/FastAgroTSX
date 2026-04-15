@@ -4,10 +4,18 @@ import {
   clearAuthSession,
   getAuthToken,
   getAuthUser,
+  persistSessionFromServer,
   saveAuthSession,
   type AuthUser,
 } from './auth-session'
-import { fetchMe, loginRequest, registerRequest, type LoginRequest, type RegisterRequest } from './api'
+import {
+  ApiHttpError,
+  fetchMe,
+  loginRequest,
+  registerRequest,
+  type LoginRequest,
+  type RegisterRequest,
+} from './api'
 
 export const authKeys = {
   session: ['auth', 'session'] as const,
@@ -15,6 +23,7 @@ export const authKeys = {
 
 export function useAuthSession() {
   const hasToken = typeof window !== 'undefined' && !!getAuthToken()
+  const cachedUser = hasToken ? getAuthUser() : null
 
   return useQuery({
     queryKey: authKeys.session,
@@ -23,18 +32,25 @@ export function useAuthSession() {
       if (!token) return null
       try {
         const user = await fetchMe()
-        saveAuthSession(token, user)
+        persistSessionFromServer(token, user)
         return user
-      } catch {
-        clearAuthSession()
-        return null
+      } catch (err) {
+        if (err instanceof ApiHttpError && err.status === 401) {
+          clearAuthSession()
+          return null
+        }
+        throw err
       }
     },
     enabled: hasToken,
-    initialData: hasToken ? getAuthUser() ?? undefined : undefined,
-    staleTime: 0,
+    // Show stored profile while validating; real `data` replaces after fetch.
+    placeholderData: cachedUser ?? undefined,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 24 * 60 * 60 * 1000,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
+    retry: (failureCount, err) =>
+      err instanceof ApiHttpError && err.status === 401 ? false : failureCount < 2,
   })
 }
 
