@@ -7,6 +7,8 @@ export type Category = {
   sort_order: number
   is_active: boolean
   icon_svg?: string
+  /** Hex chip color on catalogue cards (#RGB or #RRGGBB). */
+  color_hex?: string
   parent_id?: number | null
   parent?: Category | null
   image_public_url?: string
@@ -101,6 +103,8 @@ export type ProductStockTone = 'primary' | 'secondary'
 export type ProductBadge = {
   label: string
   tone: ProductBadgeTone
+  /** When set, used as chip background on the product image (category row). */
+  chipBackgroundHex?: string
 }
 
 export type ProductPriceTier = {
@@ -126,6 +130,29 @@ export function formatDa(amountDa: number): string {
   return `${amountDa.toLocaleString('fr-FR')} DA`
 }
 
+/** Foreground readable on top of a hex background (WCAG-ish luminance). */
+export function hexToContrastingForeground(hex: string): string {
+  const raw = hex.trim()
+  const expanded = expandShortHex(raw)
+  const match = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(expanded.replace('#', ''))
+  if (!match) return '#1a1c19'
+  const r = parseInt(match[1], 16) / 255
+  const g = parseInt(match[2], 16) / 255
+  const b = parseInt(match[3], 16) / 255
+  const lin = (c: number) =>
+    c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  const L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+  return L > 0.45 ? '#1a1c19' : '#ffffff'
+}
+
+function expandShortHex(hex: string): string {
+  const s = hex.trim()
+  if (/^#[0-9A-Fa-f]{3}$/.test(s)) {
+    return `#${s[1]}${s[1]}${s[2]}${s[2]}${s[3]}${s[3]}`.toLowerCase()
+  }
+  return s.startsWith('#') ? s : `#${s}`
+}
+
 const PLACEHOLDER_IMAGE =
   'https://placehold.co/600x400/e8e8e0/1B5E20?text=Fast-Agros'
 
@@ -148,7 +175,14 @@ export function productToCatalogueCard(p: Product): CatalogueProductCard {
 
   const badges: ProductBadge[] = []
   if (p.category?.name) {
-    badges.push({ label: p.category.name, tone: 'primary' })
+    const chip = p.category.color_hex?.trim()
+    badges.push({
+      label: p.category.name,
+      tone: 'primary',
+      ...(chip && /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(chip)
+        ? { chipBackgroundHex: chip }
+        : {}),
+    })
   }
   const originSpec = p.specifications?.find(
     (s) =>

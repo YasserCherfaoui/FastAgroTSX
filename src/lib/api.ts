@@ -139,6 +139,12 @@ export async function fetchCatalogueCategories(params?: {
 export async function fetchCatalogueProducts(params?: {
   page?: number
   perPage?: number
+  /** Trims whitespace; omitted when empty. */
+  q?: string
+  categoryId?: number | null
+  sort?: 'price_asc' | 'price_desc' | 'recent' | '' | string
+  minPriceCents?: number | null
+  maxPriceCents?: number | null
 }): Promise<ProductListResponse> {
   const page = params?.page ?? 1
   const perPage = params?.perPage ?? 12
@@ -146,6 +152,19 @@ export async function fetchCatalogueProducts(params?: {
     page: String(page),
     per_page: String(perPage),
   })
+  const q = params?.q?.trim()
+  if (q) searchParams.set('q', q)
+  if (params?.categoryId != null && params.categoryId > 0) {
+    searchParams.set('category_id', String(params.categoryId))
+  }
+  const sort = params?.sort?.trim()
+  if (sort) searchParams.set('sort', sort)
+  if (params?.minPriceCents != null && params.minPriceCents >= 0) {
+    searchParams.set('min_price_cents', String(params.minPriceCents))
+  }
+  if (params?.maxPriceCents != null && params.maxPriceCents >= 0) {
+    searchParams.set('max_price_cents', String(params.maxPriceCents))
+  }
   const res = await fetch(`${getApiBaseUrl()}/api/v1/catalogue/products?${searchParams}`)
   if (!res.ok) throw new Error(await readApiError(res))
   return res.json() as Promise<ProductListResponse>
