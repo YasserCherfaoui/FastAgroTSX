@@ -1,15 +1,10 @@
+import { catalogueBadgeChipStyle, catalogueBadgeToneClass } from '../lib/product-badge-styles'
 import type { CatalogueProductCard } from '../models/product'
 import { formatDa } from '../models/product'
 
 type ProductListItemProps = {
   product: CatalogueProductCard
   onAddToQuote?: (product: CatalogueProductCard) => void
-}
-
-function badgeToneClass(tone: CatalogueProductCard['badges'][number]['tone']): string {
-  if (tone === 'primary') return 'bg-primary text-(--on-primary)'
-  if (tone === 'secondary') return 'bg-secondary text-(--on-secondary)'
-  return 'bg-(--on-surface) text-(--surface)'
 }
 
 export default function ProductListItem({ product, onAddToQuote }: ProductListItemProps) {
@@ -27,7 +22,10 @@ export default function ProductListItem({ product, onAddToQuote }: ProductListIt
           {product.badges.slice(0, 2).map((badge) => (
             <span
               key={`${product.id}-${badge.label}`}
-              className={`rounded-sm px-2 py-0.5 text-[9px] font-bold tracking-widest uppercase ${badgeToneClass(badge.tone)}`}
+              className={`rounded-sm px-2 py-0.5 text-[9px] font-bold tracking-widest uppercase ${
+                badge.chipBackgroundHex ? '' : catalogueBadgeToneClass(badge.tone)
+              }`}
+              style={catalogueBadgeChipStyle(badge)}
             >
               {badge.label}
             </span>

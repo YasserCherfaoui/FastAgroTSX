@@ -1,24 +1,10 @@
-import type { CSSProperties } from 'react'
 import type { CatalogueProductCard } from '../models/product'
-import { formatDa, hexToContrastingForeground } from '../models/product'
+import { formatDa } from '../models/product'
+import { catalogueBadgeChipStyle, catalogueBadgeToneClass } from '../lib/product-badge-styles'
 
 type ProductCardProps = {
   product: CatalogueProductCard
   onAddToQuote?: (product: CatalogueProductCard) => void
-}
-
-function badgeToneClass(tone: CatalogueProductCard['badges'][number]['tone']): string {
-  if (tone === 'primary') return 'bg-primary text-(--on-primary)'
-  if (tone === 'secondary') return 'bg-secondary text-(--on-secondary)'
-  return 'bg-(--on-surface) text-(--surface)'
-}
-
-function badgeChipStyle(badge: CatalogueProductCard['badges'][number]): CSSProperties | undefined {
-  if (!badge.chipBackgroundHex) return undefined
-  return {
-    backgroundColor: badge.chipBackgroundHex,
-    color: hexToContrastingForeground(badge.chipBackgroundHex),
-  }
 }
 
 export default function ProductCard({ product, onAddToQuote }: ProductCardProps) {
@@ -35,9 +21,9 @@ export default function ProductCard({ product, onAddToQuote }: ProductCardProps)
             <span
               key={`${product.id}-${badge.label}`}
               className={`rounded-sm px-3 py-1 text-[10px] font-bold tracking-widest uppercase ${
-                badge.chipBackgroundHex ? '' : badgeToneClass(badge.tone)
+                badge.chipBackgroundHex ? '' : catalogueBadgeToneClass(badge.tone)
               }`}
-              style={badgeChipStyle(badge)}
+              style={catalogueBadgeChipStyle(badge)}
             >
               {badge.label}
             </span>
