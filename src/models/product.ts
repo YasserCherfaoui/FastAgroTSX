@@ -76,6 +76,7 @@ export type Product = {
   name: string
   description: string
   price_cents: number
+  best_seller?: boolean
   category_id?: number | null
   category?: Category | null
   created_at: string

@@ -145,6 +145,8 @@ export async function fetchCatalogueProducts(params?: {
   sort?: 'price_asc' | 'price_desc' | 'recent' | '' | string
   minPriceCents?: number | null
   maxPriceCents?: number | null
+  /** When true, only products marked best seller (landing / highlights). */
+  bestSeller?: boolean
 }): Promise<ProductListResponse> {
   const page = params?.page ?? 1
   const perPage = params?.perPage ?? 12
@@ -164,6 +166,9 @@ export async function fetchCatalogueProducts(params?: {
   }
   if (params?.maxPriceCents != null && params.maxPriceCents >= 0) {
     searchParams.set('max_price_cents', String(params.maxPriceCents))
+  }
+  if (params?.bestSeller === true) {
+    searchParams.set('best_seller', 'true')
   }
   const res = await fetch(`${getApiBaseUrl()}/api/v1/catalogue/products?${searchParams}`)
   if (!res.ok) throw new Error(await readApiError(res))

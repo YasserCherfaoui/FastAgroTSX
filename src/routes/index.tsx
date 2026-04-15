@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { fetchCatalogueCategories } from '../lib/api'
-import type { Category } from '../models/product'
+import { fetchCatalogueCategories, fetchCatalogueProducts } from '../lib/api'
+import type { Category, Product } from '../models/product'
+import { formatDa } from '../models/product'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -52,49 +53,71 @@ function CategoryAvatar({ category }: { category: Category }) {
   )
 }
 
+const LANDING_PRODUCT_IMAGE_FALLBACK =
+  'https://placehold.co/600x400/e8e8e0/1B5E20?text=Fast-Agros'
+
+function daFromCents(cents: number): number {
+  return Math.round(cents / 100)
+}
+
+function LandingBestSellerCard({ product: p }: { product: Product }) {
+  const imageUrl = p.images?.[0]?.public_url ?? LANDING_PRODUCT_IMAGE_FALLBACK
+  const sorted = [...(p.pricing_tiers ?? [])].sort((a, b) => a.sort_order - b.sort_order)
+  const primary = sorted.find((t) => t.is_highlighted) ?? sorted[0]
+  const secondary =
+    primary != null ? sorted.find((t) => t.id !== primary.id) : undefined
+  const mainLabel = primary?.label ?? 'Prix'
+  const mainDa = daFromCents(primary?.price_cents ?? p.price_cents)
+
+  return (
+    <article className="rounded-2xl bg-[var(--surface-container-lowest)] p-6 shadow-[0_10px_18px_rgba(26,28,25,0.08)]">
+      <img
+        src={imageUrl}
+        alt={p.name}
+        className="h-48 w-full rounded-xl object-cover"
+      />
+      <p className="mt-5 mb-1 text-xs font-bold tracking-[0.12em] text-[var(--on-surface-variant)] uppercase">
+        {p.category?.name ?? 'Catalogue'}
+      </p>
+      <h3 className="m-0 text-xl font-black text-[var(--on-surface)]">{p.name}</h3>
+      <div className="mt-6 space-y-3">
+        <div className="flex items-center justify-between rounded-lg bg-[var(--surface-container-low)] px-3 py-3">
+          <span className="text-xs text-[var(--on-surface-variant)]">{mainLabel}</span>
+          <span className="text-lg font-black text-[var(--primary)]">{formatDa(mainDa)}</span>
+        </div>
+        {secondary ? (
+          <div className="flex items-center justify-between px-3 text-xs text-[var(--on-surface-variant)]">
+            <span>{secondary.label}</span>
+            <span className="font-bold text-[var(--on-surface)]">
+              {formatDa(daFromCents(secondary.price_cents))}
+            </span>
+          </div>
+        ) : null}
+      </div>
+      <Link
+        to="/catalogue"
+        className="mt-6 block w-full rounded-lg bg-[linear-gradient(120deg,var(--primary),var(--primary-container))] py-3 text-center text-sm font-bold text-[var(--on-primary)] no-underline"
+      >
+        Commander
+      </Link>
+    </article>
+  )
+}
+
 function App() {
   const categoriesQuery = useQuery({
     queryKey: ['catalogue', 'categories', { page: 1, perPage: 100 }],
     queryFn: () => fetchCatalogueCategories({ page: 1, perPage: 100 }),
   })
 
+  const bestSellersQuery = useQuery({
+    queryKey: ['catalogue', 'products', 'best-sellers'],
+    queryFn: () =>
+      fetchCatalogueProducts({ page: 1, perPage: 8, bestSeller: true }),
+  })
+
   const categories =
     categoriesQuery.data?.items.filter((c) => c.is_active) ?? []
-
-  const topProducts = [
-    [
-      'Céréales',
-      'Riz Basmati Premium (25kg)',
-      '1 Palette',
-      '45 000 DA',
-      '42 500 DA',
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBPM4t0JyTLTt9TtJRYt0MB78vYHg_HWd8rsUj-sGlA3hQoZ9leCxJ0GoN1xsjBeAkgC_-S-QDxAcle50tLpiW4auOyHXT3yjdyJk3-0qgVHdmtvuPLlkwf9MNajrTYykYRIBW2I2vWb-jFXQHt1pYS_K4tILzKs6UE1UITPY3QYFQzDDaAL5mlU9Ffg7UVVYblh5OjZE0nvKaPhkPWX1O42YLJ-j2phhHsvu99T6f9mVqDxTY2wlct2NseeC6IiL7uFagZJV_NhOw',
-    ],
-    [
-      'Huiles',
-      'Huile de Tournesol (5L x 4)',
-      'Carton',
-      '5 200 DA',
-      '4 850 DA',
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuAg26QSPEBH-F_YwcDYVSTMCl_txiRlxV9M4rQrHQP7RCVcDheGDi6856zs9QpIPiODUKSTKgFxExrjOEiYkaz6xJPDxxiQyHM9biF9_E3z6aBPl4kRo2uM866jh2IdTOC68831bkD8RUqGeZP0elYTta_IZA63VO44SYiRMK91oD_zu9K9fEmrzBJNtJj9ryhaQ31Eq53eTlt8R2A-jArqije95h6vvf4ruptUHsstAgNO6C0U56pEEj-LONNH-3umLqzsMzX4qk4',
-    ],
-    [
-      'Légumineuses',
-      'Lentilles Brunes Extra (50kg)',
-      '1 Sac',
-      '12 400 DA',
-      '11 900 DA',
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDhTdQSXIEu7oKiNOT2XRR_ESm08AAVPY73axGrsu0Y5_BNUp65VMT_y1xLCxEg1MmP8j4UYchIDfDXxzhPHgGCONamU-f2WsE1V7Py3eR9K776fWStnkKu7H8kWL1XXK9ejgmtag5qkDLF7j9aMRLbt3OaQSwsVNb-39FHadvVqc0pmf6ctYQVL5uPaTnwrQMFpYrF_5zIy-jefeRRfEQldg7jkFOwcicm0GWQ3_AraHuN0qqF38BBJFiVAvu-mm3eoTwmTkg6Sls',
-    ],
-    [
-      'Sucre',
-      'Sucre Raffiné Blanc (10kg x 5)',
-      'Lot de 5',
-      '6 100 DA',
-      '5 750 DA',
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCsfyxE9UWZxHBl83ctYJdi5uMNI1p7HKKRHxzjJ0ujtOFZMS5dd5PZ82yHBRV3WpURQBgr3K9f_DgI8y10yDQiH_efOLl2MeOX7DdelE6ELMSsEkmiERbXCljY0PK2zAflI3DFDos8Edmx8w3fYfaFUsNGMX7AoaPFaTOLTv4m10H23nZQN2FbUXaEGYNCHZQnCUzWfQE0VIJYd6hR7JF0ziAHJkJ_WlRzEFtoG8AxaOdtFKu-nX9ocnH9OEDZR2333YtoQb5M944',
-    ],
-  ]
 
   const logisticsSteps = [
     'Créez votre Compte',
@@ -237,48 +260,26 @@ function App() {
             Produits les plus commandés
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {topProducts.map(
-              ([category, name, unit, price, bulkPrice, image], index) => (
-              <article
-                key={name}
-                className="rounded-2xl bg-[var(--surface-container-lowest)] p-6 shadow-[0_10px_18px_rgba(26,28,25,0.08)]"
-              >
-                <img
-                  src={image}
-                  alt={name}
-                  className="h-48 w-full rounded-xl object-cover"
-                />
-                <p className="mt-5 mb-1 text-xs font-bold tracking-[0.12em] text-[var(--on-surface-variant)] uppercase">
-                  {category}
-                </p>
-                <h3 className="m-0 text-xl font-black text-[var(--on-surface)]">
-                  {name}
-                </h3>
-                <div className="mt-6 space-y-3">
-                  <div className="flex items-center justify-between rounded-lg bg-[var(--surface-container-low)] px-3 py-3">
-                    <span className="text-xs text-[var(--on-surface-variant)]">
-                      {unit}
-                    </span>
-                    <span className="text-lg font-black text-[var(--primary)]">
-                      {price}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between px-3 text-xs text-[var(--on-surface-variant)]">
-                    <span>{index === 0 ? 'Min. 5 Palettes' : 'Volume grossiste'}</span>
-                    <span className="font-bold text-[var(--on-surface)]">
-                      {bulkPrice}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="mt-6 w-full rounded-lg bg-[linear-gradient(120deg,var(--primary),var(--primary-container))] py-3 text-sm font-bold text-[var(--on-primary)]"
-                >
-                  Commander
-                </button>
-              </article>
-              ),
+            {bestSellersQuery.isLoading && (
+              <p className="col-span-full text-center text-[var(--on-surface-variant)]">
+                Chargement…
+              </p>
             )}
+            {bestSellersQuery.isError && (
+              <p className="col-span-full text-center text-[var(--on-surface-variant)]">
+                Impossible de charger les produits pour le moment.
+              </p>
+            )}
+            {!bestSellersQuery.isLoading &&
+              !bestSellersQuery.isError &&
+              (bestSellersQuery.data?.items.length ?? 0) === 0 && (
+                <p className="col-span-full text-center text-[var(--on-surface-variant)]">
+                  Aucun best-seller configuré pour le moment.
+                </p>
+              )}
+            {(bestSellersQuery.data?.items ?? []).map((p) => (
+              <LandingBestSellerCard key={p.id} product={p} />
+            ))}
           </div>
         </div>
       </section>
