@@ -1,14 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { redirectIfAuthenticated } from '../lib/auth-guards'
+import { useRegisterMutation } from '../lib/auth-queries'
+
 export const Route = createFileRoute('/register')({
+  beforeLoad: () => redirectIfAuthenticated(),
   component: RegisterPage,
 })
 
 function RegisterPage() {
+  const navigate = useNavigate()
+  const registerMutation = useRegisterMutation()
+
   const accountTypes = [
     { value: 'grossiste', label: 'Grossiste', subtitle: 'Volume industriel' },
     { value: 'detailant', label: 'Detailant', subtitle: 'Commerce local' },
@@ -94,8 +101,25 @@ function RegisterPage() {
 
   const selectedAccountType = watch('accountType')
 
-  function onSubmit(data: RegisterFormValues) {
-    console.log('Register step 1 payload', data)
+  async function onSubmit(data: RegisterFormValues) {
+    if (currentStep !== 3) return
+    try {
+      await registerMutation.mutateAsync({
+        email: data.email,
+        password: data.password,
+        full_name: data.fullName,
+        company_name: data.companyName,
+        account_type: data.accountType,
+        wilaya: data.wilaya,
+        address: data.address,
+        phone: data.phone,
+        ...(data.rcNumber?.trim() ? { rc_number: data.rcNumber.trim() } : {}),
+        ...(data.nif?.trim() ? { nif: data.nif.trim() } : {}),
+      })
+      await navigate({ to: '/' })
+    } catch {
+      /* surfaced via registerMutation */
+    }
   }
 
   async function goToNextStep() {
@@ -127,14 +151,6 @@ function RegisterPage() {
 
   return (
     <main className="bg-(--surface) text-(--on-surface) min-h-screen selection:bg-(--secondary-container) selection:text-(--on-secondary-container)">
-      <header className="bg-(--surface) sticky top-0 z-50 w-full px-8 py-6 shadow-[0_4px_20px_-5px_rgba(0,0,0,0.06)]">
-        <div className="mx-auto flex w-full max-w-[1536px] items-center justify-center">
-          <span className="font-headline text-2xl font-black tracking-tight text-[#1B5E20] italic">
-            Fast-Agros
-          </span>
-        </div>
-      </header>
-
       <section className="flex min-h-screen flex-col items-center px-6 py-12">
         <div className="mb-12 w-full max-w-[560px]">
           <div className="relative flex items-center justify-between">
@@ -185,6 +201,13 @@ function RegisterPage() {
           </header>
 
           <form className="space-y-8" onSubmit={handleSubmit(onSubmit)} noValidate>
+            {registerMutation.isError ? (
+              <p className="text-(--error) rounded-lg bg-(--error-container) px-4 py-3 text-sm">
+                {registerMutation.error instanceof Error
+                  ? registerMutation.error.message
+                  : 'Inscription impossible.'}
+              </p>
+            ) : null}
             {currentStep === 1 ? (
             <div className="space-y-6">
               <div>
@@ -453,10 +476,10 @@ function RegisterPage() {
                 ) : (
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="bg-(--secondary-container) text-(--on-secondary-container) flex h-14 flex-1 items-center justify-center gap-2 rounded-lg text-lg font-bold shadow-lg transition-all hover:opacity-90 active:scale-[0.98]"
+                    disabled={isSubmitting || registerMutation.isPending}
+                    className="bg-(--secondary-container) text-(--on-secondary-container) flex h-14 flex-1 items-center justify-center gap-2 rounded-lg text-lg font-bold shadow-lg transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
                   >
-                    {isSubmitting ? 'Validation...' : 'Terminer'}
+                    {registerMutation.isPending ? 'Validation...' : 'Terminer'}
                     <span aria-hidden="true">✓</span>
                   </button>
                 )}

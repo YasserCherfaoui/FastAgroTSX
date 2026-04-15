@@ -20,47 +20,6 @@ function CataloguePage() {
 
   return (
     <main className="bg-(--surface) text-(--on-surface) min-h-screen font-sans">
-      <nav className="sticky top-0 z-50 w-full border-none bg-[#FAFAF5] shadow-[0_4px_20px_-5px_rgba(0,0,0,0.06)]">
-        <div className="mx-auto flex w-full max-w-screen-2xl items-center justify-between px-8 py-4">
-          <div className="flex items-center gap-12">
-            <Link to="/" className="font-headline text-2xl font-black tracking-tight text-[#1B5E20] italic">
-              Fast-Agros
-            </Link>
-            <div className="font-headline hidden items-center gap-8 text-sm font-bold tracking-tight md:flex">
-              <Link to="/catalogue" className="border-b-2 border-[#1B5E20] pb-1 text-[#1B5E20]">
-                Catalogue
-              </Link>
-              <a href="#" className="text-stone-600 transition-colors hover:text-[#1B5E20]">
-                Categories
-              </a>
-              <a href="#" className="text-stone-600 transition-colors hover:text-[#1B5E20]">
-                Gros
-              </a>
-              <a href="#" className="text-stone-600 transition-colors hover:text-[#1B5E20]">
-                About
-              </a>
-              <a href="#" className="text-stone-600 transition-colors hover:text-[#1B5E20]">
-                Contact
-              </a>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="rounded-lg p-2 text-stone-600 transition-colors hover:bg-stone-100">
-              <span className="material-symbols-outlined">language</span>
-            </button>
-            <Link
-              to="/login"
-              className="rounded-lg px-4 py-2 text-sm font-bold text-stone-600 transition-all hover:bg-stone-100 active:scale-95"
-            >
-              Se connecter
-            </Link>
-            <button className="bg-(--primary-container) text-(--on-primary) rounded-lg px-6 py-2.5 text-sm font-bold shadow-sm transition-all active:scale-95">
-              Commander maintenant
-            </button>
-          </div>
-        </div>
-      </nav>
-
       <section className="mx-auto flex max-w-screen-2xl gap-8 px-8 py-10">
         <aside className="hidden w-72 shrink-0 flex-col space-y-8 lg:flex">
           <div className="space-y-4">
@@ -256,88 +215,6 @@ function CataloguePage() {
           </div>
         </div>
       </section>
-
-      <footer className="w-full border-t-0 bg-stone-100 px-8 py-16">
-        <div className="mx-auto grid max-w-screen-2xl grid-cols-1 gap-12 md:grid-cols-4">
-          <div className="space-y-6">
-            <div className="font-headline text-2xl font-extrabold text-[#1B5E20] italic">Fast-Agros</div>
-            <p className="leading-relaxed text-xs tracking-widest text-stone-500 uppercase">
-              © 2024 Fast-Agros. Industrial Freshness. Global standards in wholesale agriculture supply chains.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-headline text-primary mb-6 text-sm font-bold tracking-widest uppercase">
-              Navigation
-            </h4>
-            <ul className="font-label space-y-3 text-xs tracking-widest uppercase">
-              <li>
-                <Link to="/catalogue" className="text-[#1B5E20]">
-                  Catalogue
-                </Link>
-              </li>
-              <li>
-                <a href="#" className="text-stone-500 hover:text-stone-800">
-                  Gros & Export
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-stone-500 hover:text-stone-800">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-stone-500 hover:text-stone-800">
-                  Logistics
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-headline text-primary mb-6 text-sm font-bold tracking-widest uppercase">
-              Legal
-            </h4>
-            <ul className="font-label space-y-3 text-xs tracking-widest uppercase">
-              <li>
-                <a href="#" className="text-stone-500 hover:text-stone-800">
-                  CGV
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-stone-500 hover:text-stone-800">
-                  Mentions Legales
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-stone-500 hover:text-stone-800">
-                  Privacy Policy
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-headline text-primary mb-6 text-sm font-bold tracking-widest uppercase">
-              Contact
-            </h4>
-            <ul className="font-label space-y-3 text-xs tracking-widest uppercase">
-              <li>
-                <a href="#" className="text-stone-500 hover:text-stone-800">
-                  Contact Sales
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-stone-500 hover:text-stone-800">
-                  Algiers Office
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-stone-500 hover:text-stone-800">
-                  Support 24/7
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </footer>
     </main>
   )
 }

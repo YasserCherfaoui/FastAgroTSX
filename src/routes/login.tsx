@@ -1,10 +1,45 @@
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+
+import { redirectIfAuthenticated } from '../lib/auth-guards'
+import { useLoginMutation } from '../lib/auth-queries'
 
 export const Route = createFileRoute('/login')({
+  beforeLoad: () => redirectIfAuthenticated(),
   component: LoginPage,
 })
 
+const loginSchema = z.object({
+  email: z.email('Email invalide'),
+  password: z.string().min(8, 'Minimum 8 caractères'),
+})
+
+type LoginFormValues = z.infer<typeof loginSchema>
+
 function LoginPage() {
+  const navigate = useNavigate()
+  const loginMutation = useLoginMutation()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
+  })
+
+  async function onSubmit(values: LoginFormValues) {
+    try {
+      await loginMutation.mutateAsync(values)
+      await navigate({ to: '/' })
+    } catch {
+      /* surfaced via loginMutation */
+    }
+  }
+
   const highlights = ['Tarifs grossiste', 'Commandes', 'Devis']
 
   return (
@@ -61,7 +96,15 @@ function LoginPage() {
               </p>
             </div>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
+              {loginMutation.isError ? (
+                <p className="text-(--error) rounded-lg bg-(--error-container) px-4 py-3 text-sm">
+                  {loginMutation.error instanceof Error
+                    ? loginMutation.error.message
+                    : 'Échec de la connexion.'}
+                </p>
+              ) : null}
+
               <div className="space-y-2">
                 <label
                   className="text-(--on-surface-variant) block text-xs font-bold tracking-[0.12em] uppercase"
@@ -71,11 +114,16 @@ function LoginPage() {
                 </label>
                 <input
                   id="email"
-                  name="email"
                   type="email"
+                  autoComplete="email"
                   placeholder="nom@entreprise.com"
+                  aria-invalid={errors.email ? 'true' : 'false'}
+                  {...register('email')}
                   className="bg-(--surface-container-lowest) ring-(--outline-variant) focus:ring-(--primary-container) h-11 w-full rounded-lg border-none px-4 text-sm ring-1 ring-inset focus:ring-2 focus:outline-none"
                 />
+                {errors.email ? (
+                  <p className="text-(--error) text-xs">{errors.email.message}</p>
+                ) : null}
               </div>
 
               <div className="space-y-2">
@@ -92,19 +140,25 @@ function LoginPage() {
                 </div>
                 <input
                   id="password"
-                  name="password"
                   type="password"
+                  autoComplete="current-password"
                   placeholder="••••••••"
+                  aria-invalid={errors.password ? 'true' : 'false'}
+                  {...register('password')}
                   className="bg-(--surface-container-lowest) ring-(--outline-variant) focus:ring-(--primary-container) h-11 w-full rounded-lg border-none px-4 text-sm ring-1 ring-inset focus:ring-2 focus:outline-none"
                 />
+                {errors.password ? (
+                  <p className="text-(--error) text-xs">{errors.password.message}</p>
+                ) : null}
               </div>
 
               <div className="space-y-4 pt-2">
                 <button
                   type="submit"
-                  className="bg-(--secondary-container) text-(--on-secondary-container) flex h-12 w-full items-center justify-center gap-2 rounded-lg font-headline font-bold shadow-sm transition-all hover:shadow-md active:scale-[0.98]"
+                  disabled={loginMutation.isPending}
+                  className="bg-(--secondary-container) text-(--on-secondary-container) flex h-12 w-full items-center justify-center gap-2 rounded-lg font-headline font-bold shadow-sm transition-all hover:shadow-md active:scale-[0.98] disabled:opacity-60"
                 >
-                  Se connecter
+                  {loginMutation.isPending ? 'Connexion…' : 'Se connecter'}
                   <span aria-hidden="true">→</span>
                 </button>
 
