@@ -4,10 +4,11 @@ import { catalogueBadgeChipStyle, catalogueBadgeToneClass } from '../lib/product
 
 type ProductCardProps = {
   product: CatalogueProductCard
-  onAddToQuote?: (product: CatalogueProductCard) => void
+  onAddToCart?: (product: CatalogueProductCard) => void
+  isJustAdded?: boolean
 }
 
-export default function ProductCard({ product, onAddToQuote }: ProductCardProps) {
+export default function ProductCard({ product, onAddToCart, isJustAdded = false }: ProductCardProps) {
   return (
     <article className="bg-(--surface-container-lowest) group overflow-hidden rounded-xl transition-all duration-300 hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)]">
       <div className="relative h-56 overflow-hidden">
@@ -74,12 +75,17 @@ export default function ProductCard({ product, onAddToQuote }: ProductCardProps)
         </div>
         <button
           type="button"
-          onClick={() => onAddToQuote?.(product)}
+          onClick={() => onAddToCart?.(product)}
           className="bg-(--on-surface) text-(--surface) hover:bg-primary flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-bold transition-colors"
         >
-          <span className="material-symbols-outlined text-sm">request_quote</span>
-          Ajouter au devis
+          <span className="material-symbols-outlined text-sm">shopping_cart</span>
+          Ajouter au panier
         </button>
+        {isJustAdded ? (
+          <p className="text-primary m-0 -mt-2 text-xs font-bold tracking-[0.08em] uppercase">
+            Produit ajoute au panier
+          </p>
+        ) : null}
       </div>
     </article>
   )

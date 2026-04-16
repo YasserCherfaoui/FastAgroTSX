@@ -4,10 +4,15 @@ import { formatDa } from '../models/product'
 
 type ProductListItemProps = {
   product: CatalogueProductCard
-  onAddToQuote?: (product: CatalogueProductCard) => void
+  onAddToCart?: (product: CatalogueProductCard) => void
+  isJustAdded?: boolean
 }
 
-export default function ProductListItem({ product, onAddToQuote }: ProductListItemProps) {
+export default function ProductListItem({
+  product,
+  onAddToCart,
+  isJustAdded = false,
+}: ProductListItemProps) {
   const highlightTier = product.priceTiers.find((t) => t.highlighted) ?? product.priceTiers[0]
 
   return (
@@ -63,13 +68,20 @@ export default function ProductListItem({ product, onAddToQuote }: ProductListIt
       </div>
 
       <div className="flex shrink-0 items-center sm:w-44">
-        <button
-          type="button"
-          onClick={() => onAddToQuote?.(product)}
-          className="bg-(--on-surface) text-(--surface) hover:bg-primary w-full rounded-lg py-3 text-sm font-bold transition-colors"
-        >
-          Ajouter au devis
-        </button>
+        <div className="w-full space-y-2">
+          <button
+            type="button"
+            onClick={() => onAddToCart?.(product)}
+            className="bg-(--on-surface) text-(--surface) hover:bg-primary w-full rounded-lg py-3 text-sm font-bold transition-colors"
+          >
+            Ajouter au panier
+          </button>
+          {isJustAdded ? (
+            <p className="text-primary m-0 text-center text-[11px] font-bold tracking-[0.08em] uppercase">
+              Ajoute au panier
+            </p>
+          ) : null}
+        </div>
       </div>
     </article>
   )

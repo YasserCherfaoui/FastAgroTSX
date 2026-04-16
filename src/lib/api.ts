@@ -180,3 +180,107 @@ export async function fetchCatalogueProduct(id: number): Promise<Product> {
   if (!res.ok) throw new Error(await readApiError(res))
   return res.json() as Promise<Product>
 }
+
+export type CreateOrderRequest = {
+  wilaya: string
+  city: string
+  address: string
+  contact_person: string
+  phone: string
+  instructions?: string
+  items: Array<{
+    product_id: number
+    quantity: number
+  }>
+}
+
+export type OrderItem = {
+  id: number
+  order_id: number
+  product_id?: number | null
+  pricing_tier_id?: number | null
+  product_name: string
+  product_image_url?: string
+  category_name?: string
+  tier_label?: string
+  quantity: number
+  unit_label?: string
+  unit_weight_kg: number
+  unit_price_cents: number
+  line_subtotal_cents: number
+  created_at: string
+  updated_at: string
+}
+
+export type Order = {
+  id: number
+  order_number: string
+  user_id: number
+  customer_name: string
+  company_name: string
+  customer_email: string
+  customer_phone: string
+  account_type: string
+  user_type: string
+  rc_number?: string | null
+  nif?: string | null
+  wilaya: string
+  city: string
+  address: string
+  contact_person: string
+  instructions?: string
+  status: string
+  subtotal_cents: number
+  tax_cents: number
+  shipping_cents: number
+  total_cents: number
+  admin_note?: string
+  items?: OrderItem[]
+  created_at: string
+  updated_at: string
+}
+
+export type OrderListResponse = {
+  items: Order[]
+  pagination: {
+    page: number
+    per_page: number
+    total_items: number
+    total_pages: number
+  }
+}
+
+export async function createOrderRequest(body: CreateOrderRequest): Promise<Order> {
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/orders`, {
+    method: 'POST',
+    headers: authJsonHeaders(),
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) throw new Error(await readApiError(res))
+  return res.json() as Promise<Order>
+}
+
+export async function fetchMyOrders(params?: {
+  page?: number
+  perPage?: number
+}): Promise<OrderListResponse> {
+  const page = params?.page ?? 1
+  const perPage = params?.perPage ?? 12
+  const searchParams = new URLSearchParams({
+    page: String(page),
+    per_page: String(perPage),
+  })
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/orders?${searchParams}`, {
+    headers: authJsonHeaders(),
+  })
+  if (!res.ok) throw new Error(await readApiError(res))
+  return res.json() as Promise<OrderListResponse>
+}
+
+export async function fetchMyOrder(id: number): Promise<Order> {
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/orders/${id}`, {
+    headers: authJsonHeaders(),
+  })
+  if (!res.ok) throw new Error(await readApiError(res))
+  return res.json() as Promise<Order>
+}

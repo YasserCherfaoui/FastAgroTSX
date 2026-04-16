@@ -17,3 +17,13 @@ export const authPageRouteOptions = {
   ssr: false as const,
   beforeLoad: () => redirectIfAuthenticated(),
 }
+
+export function requireAuthentication(redirectTo: string): void {
+  if (typeof window !== 'undefined' && !getAuthToken()) {
+    throw redirect({
+      to: '/login',
+      search: { redirect: redirectTo },
+      replace: true,
+    })
+  }
+}

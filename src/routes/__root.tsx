@@ -4,6 +4,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import AuthSync from '../components/AuthSync'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
+import { CartProvider } from '../lib/cart'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
@@ -49,10 +50,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
-        <AuthSync />
-        <Header />
-        {children}
-        <Footer />
+        <CartProvider>
+          <AuthSync />
+          <Header />
+          {children}
+          <Footer />
+        </CartProvider>
         <TanStackDevtools
           config={{
             position: 'bottom-right',

@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard'
 import ProductListItem from '../components/ProductListItem'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
 import { fetchCatalogueCategories, fetchCatalogueProducts } from '../lib/api'
+import { useCart } from '../lib/cart'
 import { formatDa, productToCatalogueCard } from '../models/product'
 
 export const Route = createFileRoute('/catalogue')({
@@ -20,6 +21,8 @@ function daToPriceCents(da: number): number {
 }
 
 function CataloguePage() {
+  const { addItem } = useCart()
+  const [justAddedProductId, setJustAddedProductId] = useState<string | null>(null)
   const [page, setPage] = useState(1)
   const [searchInput, setSearchInput] = useState('')
   const debouncedSearch = useDebouncedValue(searchInput, 350)
@@ -153,6 +156,22 @@ function CataloguePage() {
     priceMaxDa,
     sort,
   ])
+
+  const handleAddToCart = useCallback(
+    (product: (typeof cards)[number]) => {
+      addItem(product)
+      setJustAddedProductId(product.id)
+    },
+    [addItem],
+  )
+
+  useEffect(() => {
+    if (!justAddedProductId) return
+    const timer = window.setTimeout(() => {
+      setJustAddedProductId(null)
+    }, 1800)
+    return () => window.clearTimeout(timer)
+  }, [justAddedProductId])
 
   return (
     <main className="bg-(--surface) text-(--on-surface) min-h-screen font-sans">
@@ -469,7 +488,14 @@ function CataloguePage() {
                   Aucun produit ne correspond à ces critères.
                 </p>
               ) : (
-                cards.map((product) => <ProductCard key={product.id} product={product} />)
+                cards.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                    isJustAdded={justAddedProductId === product.id}
+                  />
+                ))
               )}
             </div>
           ) : (
@@ -488,7 +514,12 @@ function CataloguePage() {
                 </p>
               ) : (
                 cards.map((product) => (
-                  <ProductListItem key={product.id} product={product} />
+                  <ProductListItem
+                    key={product.id}
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                    isJustAdded={justAddedProductId === product.id}
+                  />
                 ))
               )}
             </div>

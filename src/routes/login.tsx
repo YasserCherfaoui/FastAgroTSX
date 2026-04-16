@@ -8,6 +8,9 @@ import { useLoginMutation } from '../lib/auth-queries'
 
 export const Route = createFileRoute('/login')({
   ...authPageRouteOptions,
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search.redirect === 'string' ? search.redirect : '/',
+  }),
   component: LoginPage,
 })
 
@@ -19,6 +22,7 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>
 
 function LoginPage() {
+  const search = Route.useSearch()
   const navigate = useNavigate()
   const loginMutation = useLoginMutation()
 
@@ -34,7 +38,7 @@ function LoginPage() {
   async function onSubmit(values: LoginFormValues) {
     try {
       await loginMutation.mutateAsync(values)
-      await navigate({ to: '/' })
+      await navigate({ to: search.redirect || '/' })
     } catch {
       /* surfaced via loginMutation */
     }

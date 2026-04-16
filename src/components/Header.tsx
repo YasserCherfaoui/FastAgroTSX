@@ -1,12 +1,15 @@
 import { Link, useRouterState } from '@tanstack/react-router'
 
 import { cn } from '../lib/utils'
+import { useCart } from '../lib/cart'
 
 import AuthNavActions from './AuthNavActions'
 
 export default function Header() {
+  const { itemCount } = useCart()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const isCatalogue = pathname === '/catalogue'
+  const isCart = pathname === '/cart' || pathname === '/checkout'
 
   return (
     <>
@@ -58,13 +61,30 @@ export default function Header() {
           </div>
 
           <div className="ml-auto flex items-center gap-4 sm:gap-6">
+            <Link
+              to="/cart"
+              className={cn(
+                'inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold no-underline transition-colors duration-200',
+                isCart
+                  ? 'bg-(--surface-container-high) text-primary'
+                  : 'text-(--on-surface-variant) hover:bg-(--surface-container-low) hover:text-primary',
+              )}
+            >
+              <span className="material-symbols-outlined text-base">shopping_cart</span>
+              Panier
+              {itemCount > 0 ? (
+                <span className="bg-secondary text-(--on-secondary-container) inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-[11px] leading-none font-bold">
+                  {itemCount}
+                </span>
+              ) : null}
+            </Link>
             <AuthNavActions />
-            <button
-              type="button"
+            <Link
+              to="/checkout"
               className="bg-(--secondary-container) text-(--on-secondary-container) rounded-lg px-6 py-2.5 text-sm font-bold transition duration-200 hover:-translate-y-0.5"
             >
               Commander maintenant
-            </button>
+            </Link>
           </div>
         </nav>
       </header>
