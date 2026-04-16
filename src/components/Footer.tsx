@@ -42,6 +42,11 @@ export default function Footer() {
               </Link>
             </li>
             <li>
+              <Link to="/my-account" className="text-inherit no-underline hover:text-primary">
+                Mon compte
+              </Link>
+            </li>
+            <li>
               <a href="/#gros" className="text-inherit no-underline hover:text-primary">
                 Vente en Gros
               </a>

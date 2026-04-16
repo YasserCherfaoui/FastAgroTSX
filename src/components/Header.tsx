@@ -10,6 +10,7 @@ export default function Header() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const isCatalogue = pathname === '/catalogue'
   const isCart = pathname === '/cart' || pathname === '/checkout'
+  const isMyAccount = pathname === '/my-account'
 
   return (
     <>
@@ -58,6 +59,17 @@ export default function Header() {
             >
               Contact
             </a>
+            <Link
+              to="/my-account"
+              className={cn(
+                'text-sm font-black tracking-tight no-underline transition-colors duration-200',
+                isMyAccount
+                  ? 'text-primary border-primary border-b-2 pb-1'
+                  : 'text-(--on-surface-variant) hover:text-primary',
+              )}
+            >
+              Mon compte
+            </Link>
           </div>
 
           <div className="ml-auto flex items-center gap-4 sm:gap-6">

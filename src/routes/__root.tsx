@@ -40,6 +40,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: RootNotFound,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -71,5 +72,24 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
+  )
+}
+
+function RootNotFound() {
+  return (
+    <main className="min-h-[50vh] bg-(--surface) px-6 py-20 sm:px-8">
+      <section className="mx-auto max-w-[1360px] rounded-3xl bg-(--surface-container-low) px-8 py-12 text-center">
+        <p className="text-secondary m-0 text-xs font-bold tracking-[0.2em] uppercase">
+          Page introuvable
+        </p>
+        <h1 className="font-headline m-0 mt-4 text-4xl font-black tracking-tight text-(--on-surface)">
+          Cette page n&apos;existe pas.
+        </h1>
+        <p className="text-(--on-surface-variant) mx-auto mt-4 max-w-xl text-sm leading-7">
+          Le lien est peut-etre invalide, ou bien le serveur de dev doit etre
+          recharge apres l&apos;ajout d&apos;une nouvelle route.
+        </p>
+      </section>
+    </main>
   )
 }

@@ -54,7 +54,7 @@ function CartPage() {
                 </p>
               </div>
               <div className="text-left md:text-right">
-                <p className="text-(--outline-variant) m-0 text-xs font-bold tracking-[0.18em] uppercase">
+                <p className="text-(--outline) m-0 text-xs font-bold tracking-[0.18em] uppercase">
                   Poids total estime
                 </p>
                 <p className="m-0 mt-2 text-3xl font-black tracking-tight">
@@ -113,7 +113,7 @@ function CartPage() {
                                 <h2 className="m-0 text-xl font-bold tracking-tight uppercase">
                                   {item.name}
                                 </h2>
-                                <p className="text-(--outline-variant) m-0 mt-2 text-sm font-medium">
+                                <p className="text-(--outline) m-0 mt-2 text-sm font-medium">
                                   Ref: #{item.productId}
                                 </p>
                               </div>
@@ -121,8 +121,8 @@ function CartPage() {
                             </div>
 
                             <div className="mt-5 flex flex-wrap items-center gap-4">
-                              <label className="bg-(--surface-container-lowest) flex h-11 items-center gap-3 overflow-hidden rounded-lg px-4">
-                                <span className="text-(--outline-variant) text-[11px] font-bold tracking-[0.16em] uppercase">
+                              <label className="bg-(--surface-container-lowest) border-primary flex h-11 items-center gap-3 overflow-hidden border-b-2 px-4">
+                                <span className="text-(--outline) text-[11px] font-bold tracking-[0.16em] uppercase">
                                   Qte
                                 </span>
                                 <input
@@ -134,7 +134,7 @@ function CartPage() {
                                   }
                                   className="w-20 border-none bg-transparent p-0 text-lg font-black outline-none"
                                 />
-                                <span className="text-(--outline-variant) text-[11px] font-bold tracking-[0.16em] uppercase">
+                                <span className="text-(--outline) text-[11px] font-bold tracking-[0.16em] uppercase">
                                   {item.unitLabel}
                                 </span>
                               </label>
@@ -145,7 +145,7 @@ function CartPage() {
                               <button
                                 type="button"
                                 onClick={() => removeItem(item.productId)}
-                                className="ml-auto inline-flex items-center rounded-md bg-[color-mix(in_oklab,var(--error)_12%,white)] px-3 py-2 text-[11px] font-bold tracking-[0.16em] text-red-700 uppercase hover:bg-[color-mix(in_oklab,var(--error)_18%,white)]"
+                                className="text-(--error) ml-auto inline-flex items-center rounded-md bg-[color-mix(in_oklab,var(--error)_12%,white)] px-3 py-2 text-[11px] font-bold tracking-[0.16em] uppercase hover:bg-[color-mix(in_oklab,var(--error)_18%,white)]"
                               >
                                 Retirer
                               </button>
@@ -168,7 +168,7 @@ function CartPage() {
                   <button
                     type="button"
                     onClick={clearCart}
-                    className="text-left text-xs font-bold tracking-[0.16em] text-red-700 uppercase"
+                    className="text-(--error) text-left text-xs font-bold tracking-[0.16em] uppercase"
                   >
                     Vider le panier
                   </button>
@@ -185,19 +185,19 @@ function CartPage() {
 
               <div className="mt-8 space-y-5">
                 <div className="flex items-baseline justify-between gap-4">
-                  <span className="text-(--outline-variant) text-xs font-bold tracking-[0.16em] uppercase">
+                  <span className="text-(--outline) text-xs font-bold tracking-[0.16em] uppercase">
                     Sous-total HT
                   </span>
                   <span className="text-lg font-bold">{formatDa(summary.subtotal)}</span>
                 </div>
                 <div className="flex items-baseline justify-between gap-4">
-                  <span className="text-(--outline-variant) text-xs font-bold tracking-[0.16em] uppercase">
+                  <span className="text-(--outline) text-xs font-bold tracking-[0.16em] uppercase">
                     Frais de logistique
                   </span>
                   <span className="text-lg font-bold">{formatDa(summary.logisticsFee)}</span>
                 </div>
                 <div className="flex items-baseline justify-between gap-4">
-                  <span className="text-(--outline-variant) text-xs font-bold tracking-[0.16em] uppercase">
+                  <span className="text-(--outline) text-xs font-bold tracking-[0.16em] uppercase">
                     Taxes (TVA)
                   </span>
                   <span className="text-lg font-bold">{formatDa(summary.taxes)}</span>
@@ -211,10 +211,9 @@ function CartPage() {
                       Total a payer
                     </span>
                     <span className="text-4xl font-black tracking-[-0.04em]">
-                      {summary.total.toLocaleString('fr-FR')}
+                      {formatDa(summary.total)}
                     </span>
                   </div>
-                  <span className="pb-1 text-xl font-bold">DA</span>
                 </div>
               </div>
 

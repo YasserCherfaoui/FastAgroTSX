@@ -40,7 +40,10 @@ function CheckoutPage() {
     mutationFn: createOrderRequest,
     onSuccess: async (order) => {
       clearCart()
-      await navigate({ to: '/orders/$orderId', params: { orderId: String(order.id) } })
+      await navigate({
+        to: '/orders/success/$orderId',
+        params: { orderId: String(order.id) },
+      })
     },
   })
 
@@ -269,10 +272,9 @@ function CheckoutPage() {
                       Grand Total
                     </span>
                     <span className="text-primary mt-2 block text-4xl font-black tracking-[-0.04em]">
-                      {summary.total.toLocaleString('fr-FR')}
+                      {formatDa(summary.total)}
                     </span>
                   </div>
-                  <span className="pb-1 text-xl font-bold">DA</span>
                 </div>
               </div>
 

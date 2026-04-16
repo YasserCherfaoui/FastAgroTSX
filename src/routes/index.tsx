@@ -79,7 +79,15 @@ function LandingBestSellerCard({ product: p }: { product: Product }) {
       <p className="mt-5 mb-1 text-xs font-bold tracking-[0.12em] text-[var(--on-surface-variant)] uppercase">
         {p.category?.name ?? 'Catalogue'}
       </p>
-      <h3 className="m-0 text-xl font-black text-[var(--on-surface)]">{p.name}</h3>
+      <Link
+        to="/products/$productId"
+        params={{ productId: String(p.id) }}
+        className="text-inherit no-underline"
+      >
+        <h3 className="m-0 text-xl font-black text-[var(--on-surface)] transition-colors hover:text-[var(--primary)]">
+          {p.name}
+        </h3>
+      </Link>
       <div className="mt-6 space-y-3">
         <div className="flex items-center justify-between rounded-lg bg-[var(--surface-container-low)] px-3 py-3">
           <span className="text-xs text-[var(--on-surface-variant)]">{mainLabel}</span>
@@ -95,10 +103,11 @@ function LandingBestSellerCard({ product: p }: { product: Product }) {
         ) : null}
       </div>
       <Link
-        to="/catalogue"
+        to="/products/$productId"
+        params={{ productId: String(p.id) }}
         className="mt-6 block w-full rounded-lg bg-[linear-gradient(120deg,var(--primary),var(--primary-container))] py-3 text-center text-sm font-bold text-[var(--on-primary)] no-underline"
       >
-        Commander
+        Voir le produit
       </Link>
     </article>
   )

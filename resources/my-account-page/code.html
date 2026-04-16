@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Client Portal | Industrial Harvest</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "on-tertiary": "#ffffff",
+                "on-secondary": "#ffffff",
+                "tertiary": "#00450d",
+                "surface-variant": "#e2e3de",
+                "primary-fixed-dim": "#91d78a",
+                "on-tertiary-fixed-variant": "#005312",
+                "secondary-container": "#fe851f",
+                "primary": "#00450d",
+                "outline": "#717a6d",
+                "on-secondary-fixed": "#311300",
+                "background": "#fafaf5",
+                "inverse-primary": "#91d78a",
+                "surface": "#fafaf5",
+                "on-secondary-fixed-variant": "#723600",
+                "surface-container-highest": "#e2e3de",
+                "on-error-container": "#93000a",
+                "primary-container": "#1b5e20",
+                "on-tertiary-container": "#86d881",
+                "on-secondary-container": "#612d00",
+                "on-error": "#ffffff",
+                "error": "#ba1a1a",
+                "primary-fixed": "#acf4a4",
+                "on-background": "#1a1c19",
+                "inverse-surface": "#2f312e",
+                "surface-container-lowest": "#ffffff",
+                "on-primary-fixed-variant": "#0c5216",
+                "on-surface": "#1a1c19",
+                "secondary-fixed-dim": "#ffb787",
+                "tertiary-fixed": "#a3f69c",
+                "on-primary": "#ffffff",
+                "surface-bright": "#fafaf5",
+                "surface-container": "#eeeee9",
+                "secondary": "#964900",
+                "on-primary-container": "#90d689",
+                "surface-dim": "#dadad6",
+                "secondary-fixed": "#ffdcc7",
+                "on-surface-variant": "#41493e",
+                "tertiary-fixed-dim": "#88d982",
+                "on-tertiary-fixed": "#002204",
+                "surface-container-low": "#f4f4ef",
+                "on-primary-fixed": "#002203",
+                "inverse-on-surface": "#f1f1ec",
+                "surface-tint": "#2a6b2c",
+                "error-container": "#ffdad6",
+                "surface-container-high": "#e8e8e4",
+                "outline-variant": "#c0c9bb",
+                "tertiary-container": "#055f18"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+              },
+              "fontFamily": {
+                "headline": ["Plus Jakarta Sans"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sidebar-active {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="bg-[#FAFAF5] dark:bg-stone-900 border-b border-stone-200/10 fixed top-0 z-50 w-full">
+<nav class="flex justify-between items-center w-full px-8 py-4 max-w-full font-['Plus_Jakarta_Sans'] tracking-tight">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-[#1B5E20] dark:text-green-500">Industrial Harvest</span>
+<div class="hidden md:flex gap-6">
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-[#1B5E20] dark:hover:text-green-400 transition-colors duration-200" href="#">Marketplace</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-[#1B5E20] dark:hover:text-green-400 transition-colors duration-200" href="#">Inventory</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-[#1B5E20] dark:hover:text-green-400 transition-colors duration-200" href="#">Logistics</a>
+<a class="text-stone-600 dark:text-stone-400 font-medium hover:text-[#1B5E20] dark:hover:text-green-400 transition-colors duration-200" href="#">Analytics</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">search</span>
+<input class="bg-surface-container-low border-none rounded-DEFAULT pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary" placeholder="Search orders..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-stone-600 hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined text-stone-600 hover:text-primary transition-colors">settings</button>
+<div class="w-8 h-8 rounded-full bg-stone-200 overflow-hidden">
+<img alt="User profile avatar" data-alt="professional male business executive in a tailored dark suit, minimalist grey background, clean and authoritative portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX4mWmzptl-AeuB7uGgT53pPXHp2fiUguh-9aJFI4rmpU5XfeL2EYiXTKju9MB3-xkwlpmByK6ORLsjwRWsYihteetz5KBrf8W97B_MtAQU08F7cbf5RmbS32eToK0qD13Q-mS9Nm_4a3t7qPMOaV7VcT25c9_Op-k_6H_Yt3HdjLKvmCG65luOHyfWsOEv4sLmKhDxY_CYWxtqA-upG1JePsF04uonYSZLEGWU33uf_ii4YtTjoyMT9dSxgTRxXWqTb8ihmRTMl8"/>
+</div>
+</div>
+</nav>
+</header>
+<div class="flex min-h-screen pt-16">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-[#FAFAF5] dark:bg-stone-900 border-r border-stone-200/10 flex flex-col font-['Inter'] text-sm z-40">
+<div class="p-6 border-b border-stone-100 dark:border-stone-800/50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-DEFAULT bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">agriculture</span>
+</div>
+<div>
+<p class="text-lg font-bold text-[#1B5E20]">Client Portal</p>
+<p class="text-[10px] text-stone-500 uppercase tracking-widest">Verified Enterprise</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 py-4">
+<a class="flex items-center gap-3 px-6 py-4 bg-white dark:bg-stone-800 text-[#1B5E20] dark:text-green-400 font-bold border-r-4 border-[#1B5E20] transition-all duration-200 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span>Account Overview</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-4 text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800/50 transition-all duration-200 ease-out" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span>Shipping Addresses</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-4 text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800/50 transition-all duration-200 ease-out" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span>Order History</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-4 text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800/50 transition-all duration-200 ease-out" href="#">
+<span class="material-symbols-outlined">shield</span>
+<span>Security</span>
+</a>
+</nav>
+<div class="p-6 bg-stone-50 dark:bg-stone-800/30">
+<div class="flex flex-col gap-1">
+<p class="text-[10px] font-bold text-stone-400 uppercase">Support Tier</p>
+<p class="font-semibold text-primary">Enterprise Gold</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 p-12">
+<!-- Header Section -->
+<div class="mb-12">
+<h1 class="text-4xl font-headline font-extrabold tracking-tight text-on-surface mb-2">Account Overview</h1>
+<p class="text-on-surface-variant max-w-2xl">Manage your enterprise profile, wholesale delivery locations, and view detailed procurement history for Fast-Agros.</p>
+</div>
+<!-- Profile Section: Business Info Bento -->
+<section class="mb-16">
+<div class="flex items-center gap-2 mb-6">
+<span class="w-2 h-6 bg-secondary rounded-full"></span>
+<h2 class="text-xl font-headline font-bold text-on-surface">Business Profile</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="col-span-2 bg-surface-container-lowest p-8 rounded-lg shadow-[32px_32px_64px_-32px_rgba(26,28,25,0.06)] flex flex-col justify-between relative overflow-hidden group">
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-8">
+<div>
+<p class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Company Entity</p>
+<h3 class="text-3xl font-headline font-extrabold text-primary">Fast-Agros Solutions Sarl</h3>
+</div>
+<span class="bg-primary/5 text-primary px-3 py-1 text-[10px] font-bold rounded uppercase tracking-tighter border border-primary/10">Active Account</span>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div>
+<p class="text-xs font-medium text-on-surface-variant mb-1">Registration (RC)</p>
+<p class="font-mono font-semibold text-on-surface">21/00-0984231B15</p>
+</div>
+<div>
+<p class="text-xs font-medium text-on-surface-variant mb-1">Tax ID (NIF)</p>
+<p class="font-mono font-semibold text-on-surface">001516090423145</p>
+</div>
+</div>
+</div>
+<div class="absolute -right-12 -bottom-12 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity duration-500">
+<span class="material-symbols-outlined text-[200px]" style="font-variation-settings: 'wght' 700;">domain</span>
+</div>
+</div>
+<div class="bg-primary text-on-primary p-8 rounded-lg flex flex-col justify-between">
+<div>
+<p class="text-xs font-bold text-primary-fixed uppercase tracking-widest mb-4">Primary Contact</p>
+<h3 class="text-xl font-headline font-bold mb-1">Ahmed Benali</h3>
+<p class="text-primary-fixed-dim text-sm opacity-80">Director of Procurement</p>
+</div>
+<div class="mt-8 space-y-3">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-sm">mail</span>
+<span class="text-sm">a.benali@fast-agros.dz</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-sm">call</span>
+<span class="text-sm">+213 23 45 67 89</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Shipping Addresses: Grid of Cards -->
+<section class="mb-16">
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center gap-2">
+<span class="w-2 h-6 bg-secondary rounded-full"></span>
+<h2 class="text-xl font-headline font-bold text-on-surface">Shipping Warehouses</h2>
+</div>
+<button class="text-sm font-bold text-primary flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-base">add_circle</span>
+                        Add New Address
+                    </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-container-low p-6 rounded-lg border border-transparent hover:border-outline-variant transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">warehouse</span>
+<span class="font-headline font-bold text-on-surface">Main Hub - Algiers</span>
+</div>
+<span class="text-[10px] font-bold bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded">DEFAULT</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-6">
+                            Zone Industrielle de Rouiba, Lot 14<br/>
+                            Algiers, 16000<br/>
+                            Algeria
+                        </p>
+<div class="flex gap-4 border-t border-outline-variant/10 pt-4">
+<button class="text-xs font-bold text-on-surface-variant hover:text-primary transition-colors">EDIT</button>
+<button class="text-xs font-bold text-on-surface-variant hover:text-error transition-colors">REMOVE</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-low p-6 rounded-lg border border-transparent hover:border-outline-variant transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">store</span>
+<span class="font-headline font-bold text-on-surface">Oran Storage Facility</span>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-6">
+                            Avenue de l'Indépendance, No 45<br/>
+                            Oran, 31000<br/>
+                            Algeria
+                        </p>
+<div class="flex gap-4 border-t border-outline-variant/10 pt-4">
+<button class="text-xs font-bold text-on-surface-variant hover:text-primary transition-colors">EDIT</button>
+<button class="text-xs font-bold text-on-surface-variant hover:text-error transition-colors">REMOVE</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-low p-6 rounded-lg border border-transparent hover:border-outline-variant transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">local_shipping</span>
+<span class="font-headline font-bold text-on-surface">Setif Logistics Point</span>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-6">
+                            Route de Constantine, Bloc C<br/>
+                            Setif, 19000<br/>
+                            Algeria
+                        </p>
+<div class="flex gap-4 border-t border-outline-variant/10 pt-4">
+<button class="text-xs font-bold text-on-surface-variant hover:text-primary transition-colors">EDIT</button>
+<button class="text-xs font-bold text-on-surface-variant hover:text-error transition-colors">REMOVE</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Order History: Industrial Table -->
+<section>
+<div class="flex items-center gap-2 mb-6">
+<span class="w-2 h-6 bg-secondary rounded-full"></span>
+<h2 class="text-xl font-headline font-bold text-on-surface">Procurement History</h2>
+</div>
+<div class="overflow-x-auto bg-surface-container-lowest rounded-lg">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-high">
+<tr>
+<th class="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Order ID</th>
+<th class="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Date</th>
+<th class="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Total Amount</th>
+<th class="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Status</th>
+<th class="px-6 py-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Order Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5 font-mono text-sm font-bold text-primary">#IH-92831-24</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Oct 12, 2024</td>
+<td class="px-6 py-5 text-sm font-bold text-on-surface">1,240,500 DZD</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="text-xs font-bold text-secondary uppercase">En cours</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="text-xs font-bold text-primary hover:bg-primary hover:text-white border border-primary/20 px-4 py-1.5 rounded transition-all">VIEW DETAILS</button>
+</td>
+</tr>
+<!-- Order Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5 font-mono text-sm font-bold text-primary">#IH-91045-24</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Sep 28, 2024</td>
+<td class="px-6 py-5 text-sm font-bold text-on-surface">845,000 DZD</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="text-xs font-bold text-primary uppercase">Livré</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="text-xs font-bold text-primary hover:bg-primary hover:text-white border border-primary/20 px-4 py-1.5 rounded transition-all">VIEW DETAILS</button>
+</td>
+</tr>
+<!-- Order Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5 font-mono text-sm font-bold text-primary">#IH-89234-24</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Sep 15, 2024</td>
+<td class="px-6 py-5 text-sm font-bold text-on-surface">2,100,250 DZD</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="text-xs font-bold text-primary uppercase">Livré</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="text-xs font-bold text-primary hover:bg-primary hover:text-white border border-primary/20 px-4 py-1.5 rounded transition-all">VIEW DETAILS</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-stone-100 dark:bg-stone-950 mt-20">
+<div class="w-full px-8 py-12 flex flex-col md:flex-row justify-between items-center font-['Inter'] text-xs uppercase tracking-widest">
+<div class="mb-8 md:mb-0">
+<span class="font-bold text-stone-900 dark:text-stone-100 text-sm">Industrial Harvest Logistics</span>
+<p class="mt-2 text-stone-500 dark:text-stone-400 normal-case tracking-normal">© 2024 Industrial Harvest Logistics. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors" href="#">Terms of Service</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors" href="#">Privacy Policy</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors" href="#">Contact Support</a>
+<a class="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 transition-colors" href="#">Wholesale FAQ</a>
+</div>
+</div>
+</footer>
+</body></html>

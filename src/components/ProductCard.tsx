@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import type { CatalogueProductCard } from '../models/product'
 import { formatDa } from '../models/product'
 import { catalogueBadgeChipStyle, catalogueBadgeToneClass } from '../lib/product-badge-styles'
@@ -11,32 +12,42 @@ type ProductCardProps = {
 export default function ProductCard({ product, onAddToCart, isJustAdded = false }: ProductCardProps) {
   return (
     <article className="bg-(--surface-container-lowest) group overflow-hidden rounded-xl transition-all duration-300 hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)]">
-      <div className="relative h-56 overflow-hidden">
-        <img
-          src={product.imageUrl}
-          alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div className="absolute top-4 left-4 flex gap-2">
-          {product.badges.map((badge) => (
-            <span
-              key={`${product.id}-${badge.label}`}
-              className={`rounded-sm px-3 py-1 text-[10px] font-bold tracking-widest uppercase ${
-                badge.chipBackgroundHex ? '' : catalogueBadgeToneClass(badge.tone)
-              }`}
-              style={catalogueBadgeChipStyle(badge)}
-            >
-              {badge.label}
-            </span>
-          ))}
+      <Link to="/products/$productId" params={{ productId: product.id }} className="block no-underline">
+        <div className="relative h-56 overflow-hidden">
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute top-4 left-4 flex gap-2">
+            {product.badges.map((badge) => (
+              <span
+                key={`${product.id}-${badge.label}`}
+                className={`rounded-sm px-3 py-1 text-[10px] font-bold tracking-widest uppercase ${
+                  badge.chipBackgroundHex ? '' : catalogueBadgeToneClass(badge.tone)
+                }`}
+                style={catalogueBadgeChipStyle(badge)}
+              >
+                {badge.label}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      </Link>
       <div className="space-y-6 p-6">
         <div>
           <p className="text-secondary mb-1 text-xs font-bold tracking-widest uppercase">
             {product.category}
           </p>
-          <h3 className="font-headline text-xl font-bold text-(--on-surface)">{product.name}</h3>
+          <Link
+            to="/products/$productId"
+            params={{ productId: product.id }}
+            className="text-inherit no-underline"
+          >
+            <h3 className="font-headline text-xl font-bold text-(--on-surface) transition-colors group-hover:text-primary">
+              {product.name}
+            </h3>
+          </Link>
         </div>
         <div className="space-y-2">
           {product.priceTiers.map((tier) => (
