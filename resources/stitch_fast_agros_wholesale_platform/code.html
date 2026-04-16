@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fast-Agros | Industrial Agriculture Wholesale</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-primary": "#91d78a",
+                    "tertiary-fixed-dim": "#88d982",
+                    "on-error": "#ffffff",
+                    "on-background": "#1a1c19",
+                    "primary-container": "#1b5e20",
+                    "tertiary": "#00450d",
+                    "surface-tint": "#2a6b2c",
+                    "on-primary-fixed": "#002203",
+                    "on-primary-container": "#90d689",
+                    "surface-dim": "#dadad6",
+                    "on-tertiary-fixed-variant": "#005312",
+                    "tertiary-fixed": "#a3f69c",
+                    "primary-fixed": "#acf4a4",
+                    "on-secondary-fixed": "#311300",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#e8e8e4",
+                    "secondary-fixed": "#ffdcc7",
+                    "on-secondary": "#ffffff",
+                    "on-surface": "#1a1c19",
+                    "background": "#fafaf5",
+                    "error": "#ba1a1a",
+                    "surface": "#fafaf5",
+                    "surface-container-highest": "#e2e3de",
+                    "inverse-on-surface": "#f1f1ec",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#ffb787",
+                    "outline-variant": "#c0c9bb",
+                    "surface-container": "#eeeee9",
+                    "on-secondary-fixed-variant": "#723600",
+                    "primary-fixed-dim": "#91d78a",
+                    "surface-bright": "#fafaf5",
+                    "primary": "#00450d",
+                    "on-tertiary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-surface-variant": "#41493e",
+                    "surface-container-low": "#f4f4ef",
+                    "inverse-surface": "#2f312e",
+                    "on-primary": "#ffffff",
+                    "secondary": "#964900",
+                    "on-tertiary-container": "#86d881",
+                    "outline": "#717a6d",
+                    "on-secondary-container": "#612d00",
+                    "on-tertiary-fixed": "#002204",
+                    "secondary-container": "#fe851f",
+                    "tertiary-container": "#055f18",
+                    "surface-variant": "#e2e3de",
+                    "on-primary-fixed-variant": "#0c5216"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #FAFAF5; color: #1a1c19; }
+        h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+        .glass-nav { backdrop-filter: blur(20px); background: rgba(250, 250, 245, 0.85); }
+    </style>
+</head>
+<body class="antialiased overflow-x-hidden">
+<!-- Top Bar -->
+<div class="bg-secondary-container text-on-secondary-container py-2 px-8 flex justify-center items-center text-xs font-bold tracking-wider uppercase">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">local_shipping</span>
+            Livraison nationale | Min. commande: 50 000 DA
+        </span>
+</div>
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-50 bg-[#FAFAF5] shadow-[0_4px_20px_-5px_rgba(0,0,0,0.06)]">
+<div class="flex items-center justify-between px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span class="text-2xl font-black text-[#1B5E20] dark:text-green-400 italic">Fast-Agros</span>
+</div>
+<nav class="hidden md:flex items-center space-x-8">
+<a class="text-[#1B5E20] border-b-2 border-[#1B5E20] pb-1 font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-sm" href="#">Catalogue</a>
+<a class="text-stone-600 hover:text-[#1B5E20] font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-sm transition-colors duration-200" href="#">Categories</a>
+<a class="text-stone-600 hover:text-[#1B5E20] font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-sm transition-colors duration-200" href="#">Gros</a>
+<a class="text-stone-600 hover:text-[#1B5E20] font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-sm transition-colors duration-200" href="#">About</a>
+<a class="text-stone-600 hover:text-[#1B5E20] font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-sm transition-colors duration-200" href="#">Contact</a>
+</nav>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center gap-2 text-stone-600 font-bold text-xs">
+<span class="material-symbols-outlined text-sm">language</span>
+<span>FR | AR</span>
+</div>
+<button class="text-[#1B5E20] font-bold text-sm hover:underline">Se connecter</button>
+<button class="bg-secondary-container text-on-secondary-container px-6 py-2.5 rounded-lg font-bold text-sm active:scale-95 transition-transform">Commander maintenant</button>
+</div>
+</div>
+</header>
+<!-- Hero Section -->
+<section class="relative min-h-[819px] flex items-center pt-12 pb-24 px-8 overflow-hidden">
+<div class="max-w-screen-2xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+<div class="space-y-8">
+<span class="inline-flex items-center px-4 py-1.5 rounded-full bg-primary-container/10 text-primary font-bold text-xs uppercase tracking-widest">
+                    Grossiste &amp; Détaillant
+                </span>
+<h1 class="text-6xl md:text-7xl font-black text-on-background leading-[1.1] tracking-tighter">
+                    Approvisionnez votre commerce <span class="text-primary">avec excellence.</span>
+</h1>
+<p class="text-on-surface-variant text-lg max-w-lg leading-relaxed">
+                    Directement du producteur à votre entrepôt. Profitez de tarifs industriels sur une gamme complète de produits agroalimentaires frais et secs.
+                </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="bg-secondary-container text-on-secondary-container px-8 py-4 rounded-lg font-extrabold text-base shadow-lg shadow-secondary-container/20 hover:translate-y-[-2px] transition-all">
+                        Voir le Catalogue
+                    </button>
+<button class="border-2 border-primary text-primary px-8 py-4 rounded-lg font-extrabold text-base hover:bg-primary/5 transition-all">
+                        Demander un Devis
+                    </button>
+</div>
+<div class="pt-8 flex items-center gap-8 grayscale opacity-60">
+<div class="flex items-center gap-2"><span class="material-symbols-outlined">verified</span> <span class="text-xs font-bold uppercase tracking-widest">ISO 22000</span></div>
+<div class="flex items-center gap-2"><span class="material-symbols-outlined">workspace_premium</span> <span class="text-xs font-bold uppercase tracking-widest">Qualité Supérieure</span></div>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -inset-4 bg-primary-container/5 rounded-[40px] rotate-3 -z-10"></div>
+<div class="rounded-[32px] overflow-hidden shadow-2xl">
+<img alt="Bulk food products warehouse" class="w-full h-[600px] object-cover" data-alt="industrial warehouse interior with neatly stacked pallets of agricultural bulk food products under bright daylight lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjF0u4NLdSZ77RRVD2_CIANPyFT4u2OlLkkp2eNrDWTWOMV-gHeS7LOrjapRhJFAQ3Smou5sH0jIII9fzCWOHHHxFHBtHMiv8LiDmwicd_odiRcBIm8FNwQ08rgk7K_G0RLar9hMWNNiT9qAWUBBDnyEyZfo0A8BIkUOGYIKcvx-zJxvCwBRBQX-Ayxj6XN0c-i4t3L_ePG4orUp5PwWVsREVIXLkhQkFvYgoHC-qMTyHIkVbnDFA9mev4pjziuv5KldmKFcLx5Aw"/>
+</div>
+<div class="absolute -bottom-6 -left-6 bg-surface-container-lowest p-6 rounded-2xl shadow-xl max-w-xs">
+<p class="text-primary font-black text-3xl">98%</p>
+<p class="text-on-surface-variant text-xs font-medium uppercase tracking-tighter">Taux de satisfaction logistique</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Key Stats Bar -->
+<section class="bg-[#1B5E20] py-16 text-white overflow-hidden">
+<div class="max-w-screen-2xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-12">
+<div class="text-center md:text-left border-l-2 border-white/10 pl-8">
+<p class="text-secondary-fixed text-5xl font-black mb-2 tracking-tighter">500+</p>
+<p class="text-white/80 font-['Inter'] text-sm font-medium uppercase tracking-widest">Produits</p>
+</div>
+<div class="text-center md:text-left border-l-2 border-white/10 pl-8">
+<p class="text-secondary-fixed text-5xl font-black mb-2 tracking-tighter">15</p>
+<p class="text-white/80 font-['Inter'] text-sm font-medium uppercase tracking-widest">Wilayas</p>
+</div>
+<div class="text-center md:text-left border-l-2 border-white/10 pl-8">
+<p class="text-secondary-fixed text-5xl font-black mb-2 tracking-tighter">2000+</p>
+<p class="text-white/80 font-['Inter'] text-sm font-medium uppercase tracking-widest">Clients</p>
+</div>
+<div class="text-center md:text-left border-l-2 border-white/10 pl-8">
+<p class="text-secondary-fixed text-5xl font-black mb-2 tracking-tighter">2010</p>
+<p class="text-white/80 font-['Inter'] text-sm font-medium uppercase tracking-widest">Depuis</p>
+</div>
+</div>
+</section>
+<!-- Categories Section -->
+<section class="py-24 px-8 bg-surface-container-low">
+<div class="max-w-screen-2xl mx-auto">
+<div class="flex justify-between items-end mb-16">
+<div>
+<h2 class="text-4xl font-black text-on-surface tracking-tight mb-4 uppercase">Nos Catégories</h2>
+<p class="text-on-surface-variant max-w-md">Découvrez notre sélection rigoureuse de produits industriels pour professionnels.</p>
+</div>
+<button class="text-primary font-bold flex items-center gap-2 group uppercase text-sm tracking-widest">
+                    Voir tout <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Category Cards -->
+<div class="bg-surface-container-lowest p-8 rounded-xl hover:bg-primary hover:text-white transition-all duration-300 group cursor-pointer">
+<span class="material-symbols-outlined text-4xl mb-6 text-primary group-hover:text-white transition-colors">grain</span>
+<h3 class="text-xl font-bold mb-2">Céréales</h3>
+<p class="text-on-surface-variant text-sm group-hover:text-white/80">45 Produits disponibles</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl hover:bg-primary hover:text-white transition-all duration-300 group cursor-pointer">
+<span class="material-symbols-outlined text-4xl mb-6 text-primary group-hover:text-white transition-colors">water_drop</span>
+<h3 class="text-xl font-bold mb-2">Huiles</h3>
+<p class="text-on-surface-variant text-sm group-hover:text-white/80">22 Produits disponibles</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl hover:bg-primary hover:text-white transition-all duration-300 group cursor-pointer">
+<span class="material-symbols-outlined text-4xl mb-6 text-primary group-hover:text-white transition-colors">eco</span>
+<h3 class="text-xl font-bold mb-2">Légumineuses</h3>
+<p class="text-on-surface-variant text-sm group-hover:text-white/80">38 Produits disponibles</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl hover:bg-primary hover:text-white transition-all duration-300 group cursor-pointer">
+<span class="material-symbols-outlined text-4xl mb-6 text-primary group-hover:text-white transition-colors">inventory_2</span>
+<h3 class="text-xl font-bold mb-2">Conserves</h3>
+<p class="text-on-surface-variant text-sm group-hover:text-white/80">67 Produits disponibles</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl hover:bg-primary hover:text-white transition-all duration-300 group cursor-pointer">
+<span class="material-symbols-outlined text-4xl mb-6 text-primary group-hover:text-white transition-colors">skillet</span>
+<h3 class="text-xl font-bold mb-2">Épices</h3>
+<p class="text-on-surface-variant text-sm group-hover:text-white/80">112 Produits disponibles</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl hover:bg-primary hover:text-white transition-all duration-300 group cursor-pointer">
+<span class="material-symbols-outlined text-4xl mb-6 text-primary group-hover:text-white transition-colors">glucose</span>
+<h3 class="text-xl font-bold mb-2">Sucre</h3>
+<p class="text-on-surface-variant text-sm group-hover:text-white/80">14 Produits disponibles</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl hover:bg-primary hover:text-white transition-all duration-300 group cursor-pointer">
+<span class="material-symbols-outlined text-4xl mb-6 text-primary group-hover:text-white transition-colors">database</span>
+<h3 class="text-xl font-bold mb-2">Produits Laitiers</h3>
+<p class="text-on-surface-variant text-sm group-hover:text-white/80">52 Produits disponibles</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl hover:bg-primary hover:text-white transition-all duration-300 group cursor-pointer">
+<span class="material-symbols-outlined text-4xl mb-6 text-primary group-hover:text-white transition-colors">local_drink</span>
+<h3 class="text-xl font-bold mb-2">Boissons</h3>
+<p class="text-on-surface-variant text-sm group-hover:text-white/80">89 Produits disponibles</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Products -->
+<section class="py-24 px-8">
+<div class="max-w-screen-2xl mx-auto">
+<h2 class="text-4xl font-black text-on-surface tracking-tight mb-16 text-center uppercase">Produits les plus commandés</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Product Card 1 -->
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm group">
+<div class="h-64 overflow-hidden bg-surface-container relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="top view of high quality basmati rice grains scattered on a rustic wooden background with natural window lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPM4t0JyTLTt9TtJRYt0MB78vYHg_HWd8rsUj-sGlA3hQoZ9leCxJ0GoN1xsjBeAkgC_-S-QDxAcle50tLpiW4auOyHXT3yjdyJk3-0qgVHdmtvuPLlkwf9MNajrTYykYRIBW2I2vWb-jFXQHt1pYS_K4tILzKs6UE1UITPY3QYFQzDDaAL5mlU9Ffg7UVVYblh5OjZE0nvKaPhkPWX1O42YLJ-j2phhHsvu99T6f9mVqDxTY2wlct2NseeC6IiL7uFagZJV_NhOw"/>
+<span class="absolute top-4 left-4 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest">En Stock</span>
+</div>
+<div class="p-6">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Céréales</p>
+<h3 class="text-xl font-black mb-4">Riz Basmati Premium (25kg)</h3>
+<div class="space-y-3 pt-4 border-t border-surface-container-high">
+<div class="flex justify-between items-center bg-surface-container-low p-3 rounded-lg">
+<span class="text-xs font-medium">1 Palette</span>
+<span class="font-black text-primary">45 000 DA</span>
+</div>
+<div class="flex justify-between items-center text-xs text-on-surface-variant px-3">
+<span>Min. 5 Palettes</span>
+<span class="font-bold">42 500 DA</span>
+</div>
+</div>
+<button class="w-full mt-6 bg-primary text-on-primary py-3 rounded-lg font-bold text-sm active:scale-95 transition-transform">Commander</button>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm group">
+<div class="h-64 overflow-hidden bg-surface-container relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="close up of premium golden olive oil being poured into a vessel with Mediterranean warm sunlit atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAg26QSPEBH-F_YwcDYVSTMCl_txiRlxV9M4rQrHQP7RCVcDheGDi6856zs9QpIPiODUKSTKgFxExrjOEiYkaz6xJPDxxiQyHM9biF9_E3z6aBPl4kRo2uM866jh2IdTOC68831bkD8RUqGeZP0elYTta_IZA63VO44SYiRMK91oD_zu9K9fEmrzBJNtJj9ryhaQ31Eq53eTlt8R2A-jArqije95h6vvf4ruptUHsstAgNO6C0U56pEEj-LONNH-3umLqzsMzX4qk4"/>
+</div>
+<div class="p-6">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Huiles</p>
+<h3 class="text-xl font-black mb-4">Huile de Tournesol (5L x 4)</h3>
+<div class="space-y-3 pt-4 border-t border-surface-container-high">
+<div class="flex justify-between items-center bg-surface-container-low p-3 rounded-lg">
+<span class="text-xs font-medium">Carton</span>
+<span class="font-black text-primary">5 200 DA</span>
+</div>
+<div class="flex justify-between items-center text-xs text-on-surface-variant px-3">
+<span>Palette (80 ctns)</span>
+<span class="font-bold">4 850 DA</span>
+</div>
+</div>
+<button class="w-full mt-6 bg-primary text-on-primary py-3 rounded-lg font-bold text-sm active:scale-95 transition-transform">Commander</button>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm group">
+<div class="h-64 overflow-hidden bg-surface-container relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="detailed macro shot of brown lentils and chickpeas in bulk sacks in a vibrant open-air market with soft bokeh" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhTdQSXIEu7oKiNOT2XRR_ESm08AAVPY73axGrsu0Y5_BNUp65VMT_y1xLCxEg1MmP8j4UYchIDfDXxzhPHgGCONamU-f2WsE1V7Py3eR9K776fWStnkKu7H8kWL1XXK9ejgmtag5qkDLF7j9aMRLbt3OaQSwsVNb-39FHadvVqc0pmf6ctYQVL5uPaTnwrQMFpYrF_5zIy-jefeRRfEQldg7jkFOwcicm0GWQ3_AraHuN0qqF38BBJFiVAvu-mm3eoTwmTkg6Sls"/>
+</div>
+<div class="p-6">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Légumineuses</p>
+<h3 class="text-xl font-black mb-4">Lentilles Brunes Extra (50kg)</h3>
+<div class="space-y-3 pt-4 border-t border-surface-container-high">
+<div class="flex justify-between items-center bg-surface-container-low p-3 rounded-lg">
+<span class="text-xs font-medium">1 Sac</span>
+<span class="font-black text-primary">12 400 DA</span>
+</div>
+<div class="flex justify-between items-center text-xs text-on-surface-variant px-3">
+<span>20+ Sacs</span>
+<span class="font-bold">11 900 DA</span>
+</div>
+</div>
+<button class="w-full mt-6 bg-primary text-on-primary py-3 rounded-lg font-bold text-sm active:scale-95 transition-transform">Commander</button>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm group">
+<div class="h-64 overflow-hidden bg-surface-container relative">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="clean composition of white sugar cubes and crystalline sugar grains on a minimalist grey background with sharp shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsfyxE9UWZxHBl83ctYJdi5uMNI1p7HKKRHxzjJ0ujtOFZMS5dd5PZ82yHBRV3WpURQBgr3K9f_DgI8y10yDQiH_efOLl2MeOX7DdelE6ELMSsEkmiERbXCljY0PK2zAflI3DFDos8Edmx8w3fYfaFUsNGMX7AoaPFaTOLTv4m10H23nZQN2FbUXaEGYNCHZQnCUzWfQE0VIJYd6hR7JF0ziAHJkJ_WlRzEFtoG8AxaOdtFKu-nX9ocnH9OEDZR2333YtoQb5M944"/>
+</div>
+<div class="p-6">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Sucre</p>
+<h3 class="text-xl font-black mb-4">Sucre Raffiné Blanc (10kg x 5)</h3>
+<div class="space-y-3 pt-4 border-t border-surface-container-high">
+<div class="flex justify-between items-center bg-surface-container-low p-3 rounded-lg">
+<span class="text-xs font-medium">Lot de 5</span>
+<span class="font-black text-primary">6 100 DA</span>
+</div>
+<div class="flex justify-between items-center text-xs text-on-surface-variant px-3">
+<span>Palette</span>
+<span class="font-bold">5 750 DA</span>
+</div>
+</div>
+<button class="w-full mt-6 bg-primary text-on-primary py-3 rounded-lg font-bold text-sm active:scale-95 transition-transform">Commander</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How It Works -->
+<section class="py-24 px-8 bg-surface-container-highest/20">
+<div class="max-w-screen-2xl mx-auto">
+<h2 class="text-4xl font-black text-on-surface tracking-tight mb-20 text-center uppercase">Comment ça marche</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 relative">
+<!-- Step 1 -->
+<div class="relative flex flex-col items-center text-center space-y-6">
+<div class="w-20 h-20 rounded-full bg-primary text-on-primary flex items-center justify-center text-2xl font-black shadow-xl z-10">
+<span class="material-symbols-outlined text-3xl">person_add</span>
+</div>
+<h3 class="text-xl font-bold">Créez votre Compte</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed px-4">Inscrivez votre entreprise avec votre RC pour accéder aux tarifs grossistes.</p>
+</div>
+<!-- Step 2 -->
+<div class="relative flex flex-col items-center text-center space-y-6">
+<div class="w-20 h-20 rounded-full bg-primary text-on-primary flex items-center justify-center text-2xl font-black shadow-xl z-10">
+<span class="material-symbols-outlined text-3xl">shopping_cart</span>
+</div>
+<h3 class="text-xl font-bold">Remplissez votre Panier</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed px-4">Sélectionnez vos volumes industriels parmi plus de 500 références.</p>
+</div>
+<!-- Step 3 -->
+<div class="relative flex flex-col items-center text-center space-y-6">
+<div class="w-20 h-20 rounded-full bg-primary text-on-primary flex items-center justify-center text-2xl font-black shadow-xl z-10">
+<span class="material-symbols-outlined text-3xl">description</span>
+</div>
+<h3 class="text-xl font-bold">Validation &amp; Facturation</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed px-4">Notre équipe valide votre commande et prépare les documents légaux.</p>
+</div>
+<!-- Step 4 -->
+<div class="relative flex flex-col items-center text-center space-y-6">
+<div class="w-20 h-20 rounded-full bg-primary text-on-primary flex items-center justify-center text-2xl font-black shadow-xl z-10">
+<span class="material-symbols-outlined text-3xl">local_shipping</span>
+</div>
+<h3 class="text-xl font-bold">Livraison sous 48h</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed px-4">Livraison sécurisée dans votre entrepôt partout en Algérie.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="py-24 px-8 overflow-hidden">
+<div class="max-w-screen-2xl mx-auto grid lg:grid-cols-3 gap-12">
+<!-- Testimonial 1 -->
+<div class="bg-surface-container-low p-10 rounded-3xl relative">
+<span class="material-symbols-outlined text-6xl text-primary/10 absolute top-8 right-8">format_quote</span>
+<div class="flex gap-1 mb-6 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-on-surface text-lg font-medium leading-relaxed mb-8">
+                    "Fast-Agros a transformé notre chaîne d'approvisionnement. Leur ponctualité et la qualité constante des céréales sont exemplaires."
+                </p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="portrait of a middle-aged professional businessman with a confident and trustworthy expression in a corporate setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKjYPNAtI8ku747iCzIdISa5TfwXFrZAGjNFcM2a3Tez1kuRRGw2rhOed4MpHafxurkprkLr66_GKXfMpCldk2KA1EroTxju8p58vAzZhmKhZ_Z7tdNPFH318LkilWyos9x0-eHSHZQEraNj7ohDhbnlvpZAx6DeaX8UnP5cQc6O8sOik5X1tgjad5Ydt8ie0iDOaF6Badk5Ipsxx7Z3hCSGcTl7obCTmaaflzSCwJj2cmvId_tU6XKEEd6nHst93Xl1_WyakRH-8"/>
+</div>
+<div>
+<p class="font-bold text-sm">Amine Mansouri</p>
+<p class="text-xs text-on-surface-variant">Gérant Supermarché, Alger</p>
+</div>
+</div>
+</div>
+<!-- Testimonial 2 -->
+<div class="bg-surface-container-low p-10 rounded-3xl relative">
+<span class="material-symbols-outlined text-6xl text-primary/10 absolute top-8 right-8">format_quote</span>
+<div class="flex gap-1 mb-6 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-on-surface text-lg font-medium leading-relaxed mb-8">
+                    "En tant qu'industriel, nous exigeons des volumes importants et réguliers. Fast-Agros est le seul partenaire capable de suivre notre cadence."
+                </p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="portrait of a professional female executive with a friendly and capable smile against a modern office backdrop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtG3RdJPKwDZETdyfCGtcbp1OfpHI-1ZBz1Cd1ZmwMEm7eAziTh98E0eRgE1E_MEP1dFPAxleyBcNqMjkUBYE70SmdU-kzuH3-x9qRro21yd4g6uwRI--PXORVLSRg8Eb0WBiI4J7QiqzkrNEsuNiazx4ToylRGOD24upFtjggcjbZJGY8_RFmOBJEyFjlNt1eaoOHWlHzQyJOaXK6eR5HA-dqIe7LtObrDoo01hncKfo3M4QV_ENcSB3W96yFYI1BYt5caJVzcas"/>
+</div>
+<div>
+<p class="font-bold text-sm">Sarah Benali</p>
+<p class="text-xs text-on-surface-variant">Directrice Logistique, Oran</p>
+</div>
+</div>
+</div>
+<!-- Testimonial 3 -->
+<div class="bg-surface-container-low p-10 rounded-3xl relative">
+<span class="material-symbols-outlined text-6xl text-primary/10 absolute top-8 right-8">format_quote</span>
+<div class="flex gap-1 mb-6 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-on-surface text-lg font-medium leading-relaxed mb-8">
+                    "Le processus de commande en ligne est d'une efficacité redoutable. Fini les appels interminables pour connaître les stocks."
+                </p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="portrait of a focused professional logistics manager in a modern industrial setting with natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBh4cIqor72nR5t2Tp73E50UmHvLX4yCgNj5VKRqqKen-AfPS1H2IAf7c2c2bLCyhYH9q0ByfRg1Id9FpUfKLcds-H3dl9jBi4z8erL_6aXXH5-y_r5dt7WBgp6Bf4cF9KECRWM21ymTp18mnxDF5RuDvV3xdHo5d_uK3hsCyqLdvcdjpkdWYWbOvcgm0DphJytKPDp6yWqFZ3UKK0J1iJLT7G46JzF-Nj9NyWqWEDqhg_b1syybyfZirbKQNW2LQaAvvFhOdHjv54"/>
+</div>
+<div>
+<p class="font-bold text-sm">Karim Zeggai</p>
+<p class="text-xs text-on-surface-variant">Acheteur, Constantine</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter Banner -->
+<section class="px-8 pb-24">
+<div class="max-w-screen-2xl mx-auto bg-[#1B5E20] rounded-[32px] p-12 lg:p-20 relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-12">
+<div class="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3"></div>
+<div class="relative z-10 text-white max-w-xl">
+<h2 class="text-4xl lg:text-5xl font-black mb-6 leading-tight">Recevez nos offres grossiste</h2>
+<p class="text-white/80 text-lg">Soyez informés en priorité de nos nouveaux arrivages et de nos baisses de prix industriels.</p>
+</div>
+<div class="relative z-10 w-full max-w-md">
+<form class="flex gap-2 bg-white/10 p-2 rounded-xl backdrop-blur-sm">
+<input class="bg-transparent border-none focus:ring-0 text-white placeholder-white/60 w-full px-4" placeholder="Votre email professionnel" type="email"/>
+<button class="bg-secondary-container text-on-secondary-container px-8 py-3 rounded-lg font-bold whitespace-nowrap active:scale-95 transition-transform" type="submit">
+                        S'abonner
+                    </button>
+</form>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-stone-100 dark:bg-stone-950 py-16 px-8 border-t-0">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 max-w-screen-2xl mx-auto">
+<div>
+<div class="flex items-center gap-2 mb-8">
+<span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span class="text-2xl font-extrabold text-[#1B5E20]">Fast-Agros</span>
+</div>
+<p class="text-stone-500 text-sm leading-relaxed mb-8">Industrial Freshness. Votre partenaire logistique de confiance pour l'agroalimentaire en gros.</p>
+<div class="flex gap-4">
+<span class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-[#1B5E20] cursor-pointer hover:bg-primary hover:text-white transition-colors"><span class="material-symbols-outlined text-sm">public</span></span>
+<span class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-[#1B5E20] cursor-pointer hover:bg-primary hover:text-white transition-colors"><span class="material-symbols-outlined text-sm">share</span></span>
+<span class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-[#1B5E20] cursor-pointer hover:bg-primary hover:text-white transition-colors"><span class="material-symbols-outlined text-sm">linked_camera</span></span>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-xs uppercase tracking-[0.2em] mb-8 text-[#1B5E20]">Navigation</h4>
+<ul class="space-y-4">
+<li><a class="text-stone-500 hover:text-stone-800 text-xs uppercase tracking-widest font-['Inter'] transition-colors" href="#">Catalogue</a></li>
+<li><a class="text-stone-500 hover:text-stone-800 text-xs uppercase tracking-widest font-['Inter'] transition-colors" href="#">Catégories</a></li>
+<li><a class="text-stone-500 hover:text-stone-800 text-xs uppercase tracking-widest font-['Inter'] transition-colors" href="#">Vente en Gros</a></li>
+<li><a class="text-stone-500 hover:text-stone-800 text-xs uppercase tracking-widest font-['Inter'] transition-colors" href="#">Devenir Partenaire</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-xs uppercase tracking-[0.2em] mb-8 text-[#1B5E20]">Légal</h4>
+<ul class="space-y-4">
+<li><a class="text-stone-500 hover:text-stone-800 text-xs uppercase tracking-widest font-['Inter'] transition-colors" href="#">CGV</a></li>
+<li><a class="text-stone-500 hover:text-stone-800 text-xs uppercase tracking-widest font-['Inter'] transition-colors" href="#">Mentions Légales</a></li>
+<li><a class="text-stone-500 hover:text-stone-800 text-xs uppercase tracking-widest font-['Inter'] transition-colors" href="#">Confidentialité</a></li>
+<li><a class="text-stone-500 hover:text-stone-800 text-xs uppercase tracking-widest font-['Inter'] transition-colors" href="#">Politique Cookies</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-xs uppercase tracking-[0.2em] mb-8 text-[#1B5E20]">Contact</h4>
+<ul class="space-y-4">
+<li class="flex items-center gap-3 text-stone-500 text-xs uppercase tracking-widest">
+<span class="material-symbols-outlined text-sm">location_on</span> Alger, Algérie
+                    </li>
+<li class="flex items-center gap-3 text-stone-500 text-xs uppercase tracking-widest">
+<span class="material-symbols-outlined text-sm">mail</span> contact@fast-agros.dz
+                    </li>
+<li class="flex items-center gap-3 text-stone-500 text-xs uppercase tracking-widest font-bold">
+<span class="material-symbols-outlined text-sm">call</span> +213 (0) 550 00 00 00
+                    </li>
+</ul>
+</div>
+</div>
+<div class="max-w-screen-2xl mx-auto mt-16 pt-8 border-t border-stone-200 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-stone-500 text-[10px] uppercase tracking-widest">© 2024 Fast-Agros. Industrial Freshness.</p>
+<div class="flex gap-6">
+<span class="material-symbols-outlined text-stone-400">payments</span>
+<span class="material-symbols-outlined text-stone-400">account_balance</span>
+<span class="material-symbols-outlined text-stone-400">local_shipping</span>
+</div>
+</div>
+</footer>
+<!-- Floating WhatsApp Button -->
+<a class="fixed bottom-8 right-8 w-16 h-16 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all z-[100]" href="#">
+<svg fill="currentColor" height="32" viewbox="0 0 16 16" width="32" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"></path>
+</svg>
+</a>
+</body></html>

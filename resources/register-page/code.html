@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Inscription Professionnelle | Fast-Agros</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#91d78a",
+                        "tertiary-fixed-dim": "#88d982",
+                        "on-error": "#ffffff",
+                        "on-background": "#1a1c19",
+                        "primary-container": "#1b5e20",
+                        "tertiary": "#00450d",
+                        "surface-tint": "#2a6b2c",
+                        "on-primary-fixed": "#002203",
+                        "on-primary-container": "#90d689",
+                        "surface-dim": "#dadad6",
+                        "on-tertiary-fixed-variant": "#005312",
+                        "tertiary-fixed": "#a3f69c",
+                        "primary-fixed": "#acf4a4",
+                        "on-secondary-fixed": "#311300",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e8e8e4",
+                        "secondary-fixed": "#ffdcc7",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#1a1c19",
+                        "background": "#fafaf5",
+                        "error": "#ba1a1a",
+                        "surface": "#fafaf5",
+                        "surface-container-highest": "#e2e3de",
+                        "inverse-on-surface": "#f1f1ec",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#ffb787",
+                        "outline-variant": "#c0c9bb",
+                        "surface-container": "#eeeee9",
+                        "on-secondary-fixed-variant": "#723600",
+                        "primary-fixed-dim": "#91d78a",
+                        "surface-bright": "#fafaf5",
+                        "primary": "#00450d",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#41493e",
+                        "surface-container-low": "#f4f4ef",
+                        "inverse-surface": "#2f312e",
+                        "on-primary": "#ffffff",
+                        "secondary": "#964900",
+                        "on-tertiary-container": "#86d881",
+                        "outline": "#717a6d",
+                        "on-secondary-container": "#612d00",
+                        "on-tertiary-fixed": "#002204",
+                        "secondary-container": "#fe851f",
+                        "tertiary-container": "#055f18",
+                        "surface-variant": "#e2e3de",
+                        "on-primary-fixed-variant": "#0c5216"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FAFAF5;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container">
+    <!-- Minimal Header (Shared Identity) -->
+    <header class="sticky top-0 w-full z-50 bg-[#FAFAF5] shadow-[0_4px_20px_-5px_rgba(0,0,0,0.06)] px-8 py-6">
+        <div class="max-w-screen-2xl mx-auto flex items-center justify-center">
+            <span
+                class="text-2xl font-black text-[#1B5E20] italic font-['Plus_Jakarta_Sans'] tracking-tight">Fast-Agros</span>
+        </div>
+    </header>
+    <main class="min-h-screen py-12 px-6 flex flex-col items-center">
+        <!-- Progress Indicator -->
+        <div class="w-full max-w-[560px] mb-12">
+            <div class="flex items-center justify-between relative">
+                <!-- Line -->
+                <div class="absolute top-1/2 left-0 w-full h-0.5 bg-surface-container-highest -translate-y-1/2 -z-10">
+                </div>
+                <!-- Step 1: Active -->
+                <div class="flex flex-col items-center gap-2 bg-surface px-2">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary font-bold shadow-lg ring-4 ring-surface">
+                        1</div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-primary font-label">Entreprise</span>
+                </div>
+                <!-- Step 2: Inactive -->
+                <div class="flex flex-col items-center gap-2 bg-surface px-2">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-bold ring-4 ring-surface">
+                        2</div>
+                    <span
+                        class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label">Compte</span>
+                </div>
+                <!-- Step 3: Inactive -->
+                <div class="flex flex-col items-center gap-2 bg-surface px-2">
+                    <div
+                        class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-bold ring-4 ring-surface">
+                        3</div>
+                    <span
+                        class="text-xs font-bold uppercase tracking-widest text-on-surface-variant font-label">Vérification</span>
+                </div>
+            </div>
+        </div>
+        <!-- Form Container -->
+        <div
+            class="w-full max-w-[560px] bg-surface-container-lowest p-8 md:p-12 rounded-xl shadow-[0_32px_64px_-12px_rgba(27,94,32,0.06)]">
+            <header class="mb-10">
+                <h1 class="text-3xl font-extrabold text-on-surface tracking-tight mb-2">Créez votre compte professionnel
+                </h1>
+                <p class="text-on-surface-variant font-body leading-relaxed">Remplissez les détails de votre
+                    établissement pour accéder aux tarifs de gros industriels.</p>
+            </header>
+            <form class="space-y-8">
+                <!-- Section 1: Business Identity -->
+                <div class="space-y-6">
+                    <div>
+                        <label
+                            class="block text-xs font-bold uppercase tracking-widest text-secondary mb-2 font-label">Raison
+                            sociale</label>
+                        <input
+                            class="w-full h-11 px-4 bg-surface-container-low border-0 rounded-lg focus:ring-0 focus:bg-surface-container-highest border-b-2 border-transparent focus:border-primary transition-all font-body text-on-surface"
+                            placeholder="ex: SARL Agri-Logistics" type="text" />
+                    </div>
+                    <div>
+                        <label
+                            class="block text-xs font-bold uppercase tracking-widest text-secondary mb-3 font-label">Type
+                            de compte</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <label
+                                class="relative flex items-center p-4 rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container-highest transition-colors group">
+                                <input class="hidden peer" name="account_type" type="radio" />
+                                <div
+                                    class="absolute inset-0 border-2 border-transparent peer-checked:border-primary rounded-lg transition-all">
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-sm font-headline">Grossiste</span>
+                                    <span class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Volume
+                                        industriel</span>
+                                </div>
+                                <span
+                                    class="material-symbols-outlined ml-auto text-primary opacity-0 peer-checked:opacity-100">check_circle</span>
+                            </label>
+                            <label
+                                class="relative flex items-center p-4 rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container-highest transition-colors group">
+                                <input class="hidden peer" name="account_type" type="radio" />
+                                <div
+                                    class="absolute inset-0 border-2 border-transparent peer-checked:border-primary rounded-lg transition-all">
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-sm font-headline">Détaillant</span>
+                                    <span
+                                        class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Commerce
+                                        local</span>
+                                </div>
+                                <span
+                                    class="material-symbols-outlined ml-auto text-primary opacity-0 peer-checked:opacity-100">check_circle</span>
+                            </label>
+                            <label
+                                class="relative flex items-center p-4 rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container-highest transition-colors group">
+                                <input class="hidden peer" name="account_type" type="radio" />
+                                <div
+                                    class="absolute inset-0 border-2 border-transparent peer-checked:border-primary rounded-lg transition-all">
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-sm font-headline">CHR</span>
+                                    <span
+                                        class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Hôtellerie
+                                        / Resto</span>
+                                </div>
+                                <span
+                                    class="material-symbols-outlined ml-auto text-primary opacity-0 peer-checked:opacity-100">check_circle</span>
+                            </label>
+                            <label
+                                class="relative flex items-center p-4 rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container-highest transition-colors group">
+                                <input class="hidden peer" name="account_type" type="radio" />
+                                <div
+                                    class="absolute inset-0 border-2 border-transparent peer-checked:border-primary rounded-lg transition-all">
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-sm font-headline">Export</span>
+                                    <span
+                                        class="text-[10px] text-on-surface-variant uppercase tracking-tighter">International</span>
+                                </div>
+                                <span
+                                    class="material-symbols-outlined ml-auto text-primary opacity-0 peer-checked:opacity-100">check_circle</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label
+                                class="block text-xs font-bold uppercase tracking-widest text-secondary mb-2 font-label">Numéro
+                                RC</label>
+                            <input
+                                class="w-full h-11 px-4 bg-surface-container-low border-0 rounded-lg focus:ring-0 focus:bg-surface-container-highest border-b-2 border-transparent focus:border-primary transition-all font-body text-on-surface"
+                                placeholder="00/00-0000000-B-00" type="text" />
+                        </div>
+                        <div>
+                            <label
+                                class="block text-xs font-bold uppercase tracking-widest text-secondary mb-2 font-label">NIF</label>
+                            <input
+                                class="w-full h-11 px-4 bg-surface-container-low border-0 rounded-lg focus:ring-0 focus:bg-surface-container-highest border-b-2 border-transparent focus:border-primary transition-all font-body text-on-surface"
+                                placeholder="000 000 000 000 000" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <!-- Section 2: Location -->
+                <div class="space-y-6 pt-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label
+                                class="block text-xs font-bold uppercase tracking-widest text-secondary mb-2 font-label">Wilaya</label>
+                            <select
+                                class="w-full h-11 px-4 bg-surface-container-low border-0 rounded-lg focus:ring-0 focus:bg-surface-container-highest border-b-2 border-transparent focus:border-primary transition-all font-body text-on-surface appearance-none">
+                                <option>01 Adrar</option>
+                                <option>02 Chlef</option>
+                                <option>06 Béjaïa</option>
+                                <option selected="">16 Alger</option>
+                                <option>31 Oran</option>
+                                <!-- Other wilayas truncated for brevity -->
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-xs font-bold uppercase tracking-widest text-secondary mb-2 font-label">Adresse</label>
+                            <input
+                                class="w-full h-11 px-4 bg-surface-container-low border-0 rounded-lg focus:ring-0 focus:bg-surface-container-highest border-b-2 border-transparent focus:border-primary transition-all font-body text-on-surface"
+                                placeholder="Zone industrielle, Lot..." type="text" />
+                        </div>
+                    </div>
+                </div>
+                <!-- Action -->
+                <div class="pt-8">
+                    <button
+                        class="w-full bg-secondary-container text-on-secondary-container h-14 rounded-lg font-bold text-lg flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-lg"
+                        type="button">
+                        Continuer
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                    <p class="mt-6 text-center text-sm text-on-surface-variant font-body">
+                        Déjà un compte ? <a class="text-primary font-bold hover:underline" href="#">Se connecter</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+        <!-- Future Step Preview (Tonal Overlay Simulation) -->
+        <div class="mt-12 w-full max-w-[560px] opacity-40 select-none pointer-events-none grayscale">
+            <div class="p-8 bg-surface-container-high rounded-xl">
+                <div class="h-4 w-32 bg-on-surface-variant rounded mb-4"></div>
+                <div class="space-y-4">
+                    <div class="h-10 bg-surface rounded w-full"></div>
+                    <div class="h-10 bg-surface rounded w-full"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer (Shared Identity) -->
+    <footer class="bg-stone-100 dark:bg-stone-950 w-full py-16 px-8 mt-auto">
+        <div class="max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="col-span-1 md:col-span-1">
+                <span class="font-['Plus_Jakarta_Sans'] font-extrabold text-[#1B5E20] text-xl">Fast-Agros</span>
+                <p class="mt-4 text-stone-500 font-['Inter'] text-xs uppercase tracking-widest leading-loose">© 2024
+                    Fast-Agros.<br />Industrial Freshness.</p>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-[#1B5E20] mb-6">Catalogue</h4>
+                <ul class="space-y-4 text-stone-500 font-['Inter'] text-xs uppercase tracking-widest">
+                    <li><a class="hover:text-stone-800 transition-colors" href="#">Fruits &amp; Légumes</a></li>
+                    <li><a class="hover:text-stone-800 transition-colors" href="#">Grains &amp; Céréales</a></li>
+                    <li><a class="hover:text-stone-800 transition-colors" href="#">Logistique</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-[#1B5E20] mb-6">Légal</h4>
+                <ul class="space-y-4 text-stone-500 font-['Inter'] text-xs uppercase tracking-widest">
+                    <li><a class="hover:text-stone-800 transition-colors" href="#">CGV</a></li>
+                    <li><a class="hover:text-stone-800 transition-colors" href="#">Mentions Légales</a></li>
+                    <li><a class="hover:text-stone-800 transition-colors" href="#">Confidentialité</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-[#1B5E20] mb-6">Support</h4>
+                <ul class="space-y-4 text-stone-500 font-['Inter'] text-xs uppercase tracking-widest">
+                    <li><a class="hover:text-stone-800 transition-colors" href="#">Contact</a></li>
+                    <li><a class="hover:text-stone-800 transition-colors" href="#">Aide</a></li>
+                    <li><a class="hover:text-stone-800 transition-colors" href="#">WhatsApp Business</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
