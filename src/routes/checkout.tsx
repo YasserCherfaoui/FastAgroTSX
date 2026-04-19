@@ -9,7 +9,8 @@ import {
 import { getAuthUser } from '../lib/auth-session'
 import { requireAuthentication } from '../lib/auth-guards'
 import { getActiveCartTier, useCart } from '../lib/cart'
-import { formatDa } from '../models/product'
+import { formatShippingLine } from '../lib/logistics-label'
+import { formatDa, taxDaFromLineSubtotal } from '../models/product'
 
 type ShippingForm = {
   countryId: number
@@ -135,13 +136,17 @@ function CheckoutPage() {
       const tier = getActiveCartTier(item)
       return sum + tier.amountDa * item.quantity
     }, 0)
+    const taxes = items.reduce((sum, item) => {
+      const tier = getActiveCartTier(item)
+      const lineSub = tier.amountDa * item.quantity
+      return sum + taxDaFromLineSubtotal(lineSub, item.taxRateBps)
+    }, 0)
     const totalWeightKg = items.reduce(
       (sum, item) => sum + item.unitWeightKg * item.quantity,
       0,
     )
     const shippingCents = selectedState?.shipping_cents ?? 0
     const logisticsFee = Math.round(shippingCents / 100)
-    const taxes = Math.round(subtotal * 0.19)
 
     return {
       subtotal,
@@ -353,7 +358,16 @@ function CheckoutPage() {
                     <div>
                       <p className="m-0 font-bold">{item.name}</p>
                       <p className="text-(--on-surface-variant) m-0 mt-1 text-xs">
-                        {item.quantity} {item.unitLabel} x {formatDa(tier.amountDa)}
+                        {item.quantity} {item.unitLabel} × {formatDa(tier.amountDa)} ·{' '}
+                        {(item.unitWeightKg * item.quantity).toLocaleString('fr-FR', {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 2,
+                        })}{' '}
+                        kg · TVA {(item.taxRateBps / 100).toLocaleString('fr-FR', {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 2,
+                        })}
+                        %
                       </p>
                     </div>
                     <p className="m-0 font-headline text-lg font-bold">
@@ -365,7 +379,15 @@ function CheckoutPage() {
 
               <div className="mt-8 space-y-4">
                 <SummaryRow label="Sous-total HT" value={formatDa(summary.subtotal)} />
-                <SummaryRow label="Logistics & Handling" value={formatDa(summary.logisticsFee)} />
+                <SummaryRow
+                  label="Logistics & Handling"
+                  value={formatShippingLine({
+                    feeDa: summary.logisticsFee,
+                    shippingCents: selectedState?.shipping_cents ?? 0,
+                    stateName: selectedState?.name,
+                    suppressFreeMessage: items.length === 0,
+                  })}
+                />
                 <SummaryRow label="Taxes (TVA)" value={formatDa(summary.taxes)} />
               </div>
 
@@ -430,7 +452,9 @@ function CheckoutPage() {
                 <p className="text-(--on-surface-variant) m-0 mt-3 text-sm leading-relaxed">
                   {summary.totalWeightKg > 5000
                     ? 'This load exceeds 5 tonnes and requires a truck-accessible unloading zone.'
-                    : 'Shipping follows the rate configured for your selected delivery zone.'}
+                    : selectedState && selectedState.shipping_cents === 0
+                      ? `Free delivery on ${selectedState.name}.`
+                      : 'Shipping follows the rate configured for your selected delivery zone.'}
                 </p>
               </div>
 
@@ -472,7 +496,9 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
       <span className="text-(--on-surface-variant) text-xs font-bold tracking-[0.16em] uppercase">
         {label}
       </span>
-      <span className="text-lg font-bold">{value}</span>
+      <span className="max-w-[min(100%,14rem)] text-right text-lg font-bold leading-snug">
+        {value}
+      </span>
     </div>
   )
 }

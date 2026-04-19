@@ -4,7 +4,8 @@ import { useMemo } from 'react'
 import { fetchCatalogueCountries, fetchCatalogueStates } from '../lib/api'
 import { getAuthToken, getAuthUser } from '../lib/auth-session'
 import { getActiveCartTier, useCart } from '../lib/cart'
-import { formatDa } from '../models/product'
+import { formatShippingLine } from '../lib/logistics-label'
+import { formatDa, taxDaFromLineSubtotal } from '../models/product'
 
 export const Route = createFileRoute('/cart')({
   component: CartPage,
@@ -48,6 +49,12 @@ function CartPage() {
       return sum + activeTier.amountDa * item.quantity
     }, 0)
 
+    const taxes = items.reduce((sum, item) => {
+      const activeTier = getActiveCartTier(item)
+      const lineSub = activeTier.amountDa * item.quantity
+      return sum + taxDaFromLineSubtotal(lineSub, item.taxRateBps)
+    }, 0)
+
     const totalWeightKg = items.reduce(
       (sum, item) => sum + item.unitWeightKg * item.quantity,
       0,
@@ -61,12 +68,13 @@ function CartPage() {
       st?.shipping_cents ?? (userDeliveryZoneInvalid ? 0 : 650000)
     const logisticsFee =
       items.length === 0 ? 0 : Math.round(shippingCents / 100)
-    const taxes = Math.round(subtotal * 0.19)
 
     return {
       subtotal,
       totalWeightKg,
       logisticsFee,
+      shippingCentsUsed: items.length === 0 ? 0 : shippingCents,
+      deliveryStateName: userDeliveryZoneInvalid ? undefined : st?.name,
       taxes,
       total: subtotal + logisticsFee + taxes,
       totalUnits: items.reduce((sum, item) => sum + item.quantity, 0),
@@ -189,7 +197,18 @@ function CartPage() {
                               </label>
 
                               <span className="text-(--on-surface-variant) text-xs">
-                                {formatDa(activeTier.amountDa)} / {item.unitLabel.slice(0, -1)}
+                                {formatDa(activeTier.amountDa)} /{' '}
+                                {item.unitLabel.replace(/s$/, '')} ·{' '}
+                                {(item.unitWeightKg * item.quantity).toLocaleString('fr-FR', {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 2,
+                                })}{' '}
+                                kg · TVA{' '}
+                                {(item.taxRateBps / 100).toLocaleString('fr-FR', {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 2,
+                                })}
+                                %
                               </span>
                               <button
                                 type="button"
@@ -243,7 +262,14 @@ function CartPage() {
                   <span className="text-(--outline) text-xs font-bold tracking-[0.16em] uppercase">
                     Frais de logistique
                   </span>
-                  <span className="text-lg font-bold">{formatDa(summary.logisticsFee)}</span>
+                  <span className="max-w-[min(100%,14rem)] text-right text-lg font-bold leading-snug">
+                    {formatShippingLine({
+                      feeDa: summary.logisticsFee,
+                      shippingCents: summary.shippingCentsUsed,
+                      stateName: summary.deliveryStateName,
+                      suppressFreeMessage: items.length === 0,
+                    })}
+                  </span>
                 </div>
                 <div className="flex items-baseline justify-between gap-4">
                   <span className="text-(--outline) text-xs font-bold tracking-[0.16em] uppercase">

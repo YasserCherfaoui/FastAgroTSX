@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { fetchMyOrder } from '../lib/api'
 import { requireAuthentication } from '../lib/auth-guards'
+import { formatShippingLine } from '../lib/logistics-label'
 import { formatDa } from '../models/product'
 
 export const Route = createFileRoute('/orders/$orderId')({
@@ -105,9 +106,15 @@ function OrderDetailPage() {
                   <span className="text-(--on-surface-variant) text-sm">TVA</span>
                   <span className="font-bold">{formatDa(Math.round(order.tax_cents / 100))}</span>
                 </div>
-                <div className="mt-3 flex items-center justify-between">
+                <div className="mt-3 flex items-center justify-between gap-3">
                   <span className="text-(--on-surface-variant) text-sm">Livraison</span>
-                  <span className="font-bold">{formatDa(Math.round(order.shipping_cents / 100))}</span>
+                  <span className="max-w-[min(100%,14rem)] text-right text-sm font-bold leading-snug">
+                    {formatShippingLine({
+                      feeDa: Math.round(order.shipping_cents / 100),
+                      shippingCents: order.shipping_cents,
+                      stateName: order.state_name || order.wilaya,
+                    })}
+                  </span>
                 </div>
                 <div className="mt-5 flex items-center justify-between">
                   <span className="text-secondary text-xs font-bold tracking-[0.16em] uppercase">
