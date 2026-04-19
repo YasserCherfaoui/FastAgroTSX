@@ -17,6 +17,7 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CatalogueRouteImport } from './routes/catalogue'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OrdersIndexRouteImport } from './routes/orders.index'
 import { Route as ProductsProductIdRouteImport } from './routes/products.$productId'
 import { Route as OrdersOrderIdRouteImport } from './routes/orders.$orderId'
 import { Route as CatalogueProductIdRouteImport } from './routes/catalogue.$productId'
@@ -64,6 +65,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrdersIndexRoute = OrdersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OrdersRoute,
+} as any)
 const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
   id: '/products/$productId',
   path: '/products/$productId',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/catalogue/$productId': typeof CatalogueProductIdRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
   '/products/$productId': typeof ProductsProductIdRoute
+  '/orders/': typeof OrdersIndexRoute
   '/orders/success/$orderId': typeof OrdersSuccessOrderIdRoute
 }
 export interface FileRoutesByTo {
@@ -118,13 +125,13 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/login': typeof LoginRoute
   '/my-account': typeof MyAccountRoute
-  '/orders': typeof OrdersRouteWithChildren
   '/register': typeof RegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/catalgoue/$productId': typeof CatalgoueProductIdRoute
   '/catalogue/$productId': typeof CatalogueProductIdRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
   '/products/$productId': typeof ProductsProductIdRoute
+  '/orders': typeof OrdersIndexRoute
   '/orders/success/$orderId': typeof OrdersSuccessOrderIdRoute
 }
 export interface FileRoutesById {
@@ -142,6 +149,7 @@ export interface FileRoutesById {
   '/catalogue/$productId': typeof CatalogueProductIdRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
   '/products/$productId': typeof ProductsProductIdRoute
+  '/orders/': typeof OrdersIndexRoute
   '/orders/success/$orderId': typeof OrdersSuccessOrderIdRoute
 }
 export interface FileRouteTypes {
@@ -160,6 +168,7 @@ export interface FileRouteTypes {
     | '/catalogue/$productId'
     | '/orders/$orderId'
     | '/products/$productId'
+    | '/orders/'
     | '/orders/success/$orderId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -169,13 +178,13 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/login'
     | '/my-account'
-    | '/orders'
     | '/register'
     | '/auth/callback'
     | '/catalgoue/$productId'
     | '/catalogue/$productId'
     | '/orders/$orderId'
     | '/products/$productId'
+    | '/orders'
     | '/orders/success/$orderId'
   id:
     | '__root__'
@@ -192,6 +201,7 @@ export interface FileRouteTypes {
     | '/catalogue/$productId'
     | '/orders/$orderId'
     | '/products/$productId'
+    | '/orders/'
     | '/orders/success/$orderId'
   fileRoutesById: FileRoutesById
 }
@@ -267,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/orders/': {
+      id: '/orders/'
+      path: '/'
+      fullPath: '/orders/'
+      preLoaderRoute: typeof OrdersIndexRouteImport
+      parentRoute: typeof OrdersRoute
+    }
     '/products/$productId': {
       id: '/products/$productId'
       path: '/products/$productId'
@@ -326,11 +343,13 @@ const CatalogueRouteWithChildren = CatalogueRoute._addFileChildren(
 
 interface OrdersRouteChildren {
   OrdersOrderIdRoute: typeof OrdersOrderIdRoute
+  OrdersIndexRoute: typeof OrdersIndexRoute
   OrdersSuccessOrderIdRoute: typeof OrdersSuccessOrderIdRoute
 }
 
 const OrdersRouteChildren: OrdersRouteChildren = {
   OrdersOrderIdRoute: OrdersOrderIdRoute,
+  OrdersIndexRoute: OrdersIndexRoute,
   OrdersSuccessOrderIdRoute: OrdersSuccessOrderIdRoute,
 }
 
