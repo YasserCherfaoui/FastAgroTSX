@@ -7,12 +7,15 @@ type AuthNavActionsProps = {
   loginClassName?: string
   logoutClassName?: string
   nameClassName?: string
+  /** Wrapper around name + logout when logged in (e.g. column layout in mobile drawer). */
+  loggedInContainerClassName?: string
 }
 
 export default function AuthNavActions({
   loginClassName = 'text-primary text-sm font-bold no-underline transition hover:underline',
   logoutClassName = 'text-(--on-surface-variant) hover:text-primary text-sm font-bold transition',
   nameClassName = 'text-(--on-surface) max-w-[140px] truncate text-sm font-semibold',
+  loggedInContainerClassName = 'flex items-center gap-3',
 }: AuthNavActionsProps) {
   const { data: user } = useAuthSession()
   const logout = useLogoutMutation()
@@ -28,7 +31,7 @@ export default function AuthNavActions({
 
   if (user) {
     return (
-      <div className="flex items-center gap-3">
+      <div className={loggedInContainerClassName}>
         <span className={nameClassName} title={user.email}>
           {user.full_name || user.email}
         </span>

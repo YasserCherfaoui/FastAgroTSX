@@ -12,6 +12,26 @@ export function getApiBaseUrl(): string {
   return DEFAULT_API
 }
 
+/** Starts the browser Google OAuth flow (API redirects to Google, then back to `/auth/callback`). */
+export function getGoogleAuthStartUrl(redirectAfterLogin: string): string {
+  const base = getApiBaseUrl()
+  const path = sanitizeOAuthRedirectPath(redirectAfterLogin)
+  const params = new URLSearchParams()
+  if (path !== '/') {
+    params.set('redirect', path)
+  }
+  const q = params.toString()
+  return `${base}/api/v1/auth/google${q ? `?${q}` : ''}`
+}
+
+function sanitizeOAuthRedirectPath(path: string): string {
+  const p = path.trim()
+  if (p === '' || !p.startsWith('/') || p.startsWith('//')) {
+    return '/'
+  }
+  return p
+}
+
 export async function readApiError(res: Response): Promise<string> {
   const data: unknown = await res.json().catch(() => ({}))
   if (

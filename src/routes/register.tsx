@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { GoogleSignInButton } from '../components/google-sign-in-button'
 import { authPageRouteOptions } from '../lib/auth-guards'
 import { useRegisterMutation } from '../lib/auth-queries'
 
@@ -199,6 +200,17 @@ function RegisterPage() {
               de gros industriels.
             </p>
           </header>
+
+          <div className="mb-10 space-y-4">
+            <GoogleSignInButton redirectAfterLogin="/" />
+            <div className="relative flex items-center py-1">
+              <div className="grow border-t border-(--outline-variant)" />
+              <span className="text-(--outline) mx-4 shrink-0 text-xs font-bold tracking-[0.12em] uppercase">
+                OU
+              </span>
+              <div className="grow border-t border-(--outline-variant)" />
+            </div>
+          </div>
 
           <form className="space-y-8" onSubmit={handleSubmit(onSubmit)} noValidate>
             {registerMutation.isError ? (

@@ -21,6 +21,7 @@ import { Route as ProductsProductIdRouteImport } from './routes/products.$produc
 import { Route as OrdersOrderIdRouteImport } from './routes/orders.$orderId'
 import { Route as CatalogueProductIdRouteImport } from './routes/catalogue.$productId'
 import { Route as CatalgoueProductIdRouteImport } from './routes/catalgoue.$productId'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as OrdersSuccessOrderIdRouteImport } from './routes/orders.success.$orderId'
 
 const RegisterRoute = RegisterRouteImport.update({
@@ -83,6 +84,11 @@ const CatalgoueProductIdRoute = CatalgoueProductIdRouteImport.update({
   path: '/catalgoue/$productId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrdersSuccessOrderIdRoute = OrdersSuccessOrderIdRouteImport.update({
   id: '/success/$orderId',
   path: '/success/$orderId',
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/my-account': typeof MyAccountRoute
   '/orders': typeof OrdersRouteWithChildren
   '/register': typeof RegisterRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/catalgoue/$productId': typeof CatalgoueProductIdRoute
   '/catalogue/$productId': typeof CatalogueProductIdRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/my-account': typeof MyAccountRoute
   '/orders': typeof OrdersRouteWithChildren
   '/register': typeof RegisterRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/catalgoue/$productId': typeof CatalgoueProductIdRoute
   '/catalogue/$productId': typeof CatalogueProductIdRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/my-account': typeof MyAccountRoute
   '/orders': typeof OrdersRouteWithChildren
   '/register': typeof RegisterRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/catalgoue/$productId': typeof CatalgoueProductIdRoute
   '/catalogue/$productId': typeof CatalogueProductIdRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/my-account'
     | '/orders'
     | '/register'
+    | '/auth/callback'
     | '/catalgoue/$productId'
     | '/catalogue/$productId'
     | '/orders/$orderId'
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/my-account'
     | '/orders'
     | '/register'
+    | '/auth/callback'
     | '/catalgoue/$productId'
     | '/catalogue/$productId'
     | '/orders/$orderId'
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '/my-account'
     | '/orders'
     | '/register'
+    | '/auth/callback'
     | '/catalgoue/$productId'
     | '/catalogue/$productId'
     | '/orders/$orderId'
@@ -192,6 +204,7 @@ export interface RootRouteChildren {
   MyAccountRoute: typeof MyAccountRoute
   OrdersRoute: typeof OrdersRouteWithChildren
   RegisterRoute: typeof RegisterRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   CatalgoueProductIdRoute: typeof CatalgoueProductIdRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
 }
@@ -282,6 +295,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalgoueProductIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/orders/success/$orderId': {
       id: '/orders/success/$orderId'
       path: '/success/$orderId'
@@ -326,6 +346,7 @@ const rootRouteChildren: RootRouteChildren = {
   MyAccountRoute: MyAccountRoute,
   OrdersRoute: OrdersRouteWithChildren,
   RegisterRoute: RegisterRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   CatalgoueProductIdRoute: CatalgoueProductIdRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
 }
