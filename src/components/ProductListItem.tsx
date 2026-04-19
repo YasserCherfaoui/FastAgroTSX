@@ -87,7 +87,7 @@ export default function ProductListItem({
           <button
             type="button"
             onClick={() => onAddToCart?.(product)}
-            className="bg-(--on-surface) text-(--surface) hover:bg-primary w-full rounded-lg py-3 text-sm font-bold transition-colors"
+            className="bg-(--on-surface) text-(--surface) hover:bg-primary hover:text-(--on-primary) w-full rounded-lg py-3 text-sm font-bold transition-colors"
           >
             Ajouter au panier
           </button>
