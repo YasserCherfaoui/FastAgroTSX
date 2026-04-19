@@ -83,7 +83,14 @@ function OrderDetailPage() {
                 {order.contact_person}
               </p>
               <p className="m-0 mt-1 text-sm text-(--on-surface-variant)">
-                {order.address}, {order.city}, {order.wilaya}
+                {[
+                  order.address,
+                  order.city,
+                  order.state_name || order.wilaya,
+                  order.country_name,
+                ]
+                  .filter(Boolean)
+                  .join(', ')}
               </p>
               <p className="m-0 mt-1 text-sm text-(--on-surface-variant)">
                 {order.customer_phone}

@@ -1,14 +1,19 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
-import { createOrderRequest } from '../lib/api'
+import {
+  createOrderRequest,
+  fetchCatalogueCountries,
+  fetchCatalogueStates,
+} from '../lib/api'
 import { getAuthUser } from '../lib/auth-session'
 import { requireAuthentication } from '../lib/auth-guards'
 import { getActiveCartTier, useCart } from '../lib/cart'
 import { formatDa } from '../models/product'
 
 type ShippingForm = {
-  wilaya: string
+  countryId: number
+  stateId: number
   city: string
   address: string
   contactPerson: string
@@ -22,20 +27,70 @@ export const Route = createFileRoute('/checkout')({
   component: CheckoutPage,
 })
 
-const WILAYAS = ['Alger', 'Oran', 'Constantine', 'Setif', 'Blida']
-
 function CheckoutPage() {
   const navigate = useNavigate()
   const { items, clearCart } = useCart()
   const authUser = getAuthUser()
-  const [form, setForm] = useState<ShippingForm>({
-    wilaya: authUser?.wilaya || 'Alger',
+  const [form, setForm] = useState<ShippingForm>(() => ({
+    countryId: authUser?.country_id ?? 0,
+    stateId: authUser?.state_id ?? 0,
     city: '',
     address: authUser?.address || '',
     contactPerson: authUser?.full_name || '',
     phone: authUser?.phone || '',
     instructions: '',
+  }))
+
+  const countriesQuery = useQuery({
+    queryKey: ['catalogue', 'geo', 'countries'],
+    queryFn: fetchCatalogueCountries,
   })
+
+  const countryId = form.countryId
+  const statesQuery = useQuery({
+    queryKey: ['catalogue', 'geo', 'states', countryId],
+    queryFn: () => fetchCatalogueStates(countryId),
+    enabled: countryId > 0,
+  })
+
+  // Prefill country from profile only (no default first country).
+  useEffect(() => {
+    const list = countriesQuery.data?.items ?? []
+    if (!list.length || form.countryId !== 0) return
+    if (
+      authUser?.country_id &&
+      list.some((c) => c.id === authUser.country_id)
+    ) {
+      setForm((f) => ({ ...f, countryId: authUser.country_id! }))
+    }
+  }, [countriesQuery.data, authUser?.country_id, form.countryId])
+
+  // Prefill wilaya from profile only when it belongs to the selected country (no default first state).
+  useEffect(() => {
+    const list = statesQuery.data?.items ?? []
+    if (!list.length || form.countryId <= 0) return
+    const authStateOk =
+      authUser?.country_id === form.countryId &&
+      authUser?.state_id != null &&
+      list.some((s) => s.id === authUser.state_id)
+    if (authStateOk && form.stateId === 0) {
+      setForm((f) => ({ ...f, stateId: authUser.state_id! }))
+      return
+    }
+    if (
+      form.stateId !== 0 &&
+      !list.some((s) => s.id === form.stateId)
+    ) {
+      setForm((f) => ({ ...f, stateId: 0 }))
+    }
+  }, [
+    statesQuery.data,
+    authUser?.country_id,
+    authUser?.state_id,
+    form.countryId,
+    form.stateId,
+  ])
+
   const orderMutation = useMutation({
     mutationFn: createOrderRequest,
     onSuccess: async (order) => {
@@ -53,6 +108,28 @@ function CheckoutPage() {
     }
   }, [items.length, navigate])
 
+  const selectedState = useMemo(() => {
+    const list = statesQuery.data?.items ?? []
+    return list.find((s) => s.id === form.stateId)
+  }, [statesQuery.data, form.stateId])
+
+  const countriesReady =
+    !countriesQuery.isLoading &&
+    !countriesQuery.isError &&
+    (countriesQuery.data?.items?.length ?? 0) > 0
+  /** When a country is chosen, wait for its zones list before allowing submit. */
+  const statesReadyForCountry =
+    form.countryId <= 0 ||
+    (!statesQuery.isLoading && !statesQuery.isError)
+
+  const canPlaceOrder =
+    items.length > 0 &&
+    countriesReady &&
+    form.countryId > 0 &&
+    form.stateId > 0 &&
+    statesReadyForCountry &&
+    !!selectedState
+
   const summary = useMemo(() => {
     const subtotal = items.reduce((sum, item) => {
       const tier = getActiveCartTier(item)
@@ -62,7 +139,8 @@ function CheckoutPage() {
       (sum, item) => sum + item.unitWeightKg * item.quantity,
       0,
     )
-    const logisticsFee = totalWeightKg > 5000 ? 12500 : 6500
+    const shippingCents = selectedState?.shipping_cents ?? 0
+    const logisticsFee = Math.round(shippingCents / 100)
     const taxes = Math.round(subtotal * 0.19)
 
     return {
@@ -72,7 +150,7 @@ function CheckoutPage() {
       totalWeightKg,
       total: subtotal + logisticsFee + taxes,
     }
-  }, [items])
+  }, [items, selectedState])
 
   const updateField = <K extends keyof ShippingForm>(field: K, value: ShippingForm[K]) => {
     setForm((current) => ({ ...current, [field]: value }))
@@ -80,10 +158,10 @@ function CheckoutPage() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (items.length === 0) return
+    if (!canPlaceOrder) return
     try {
       await orderMutation.mutateAsync({
-        wilaya: form.wilaya,
+        state_id: form.stateId,
         city: form.city.trim(),
         address: form.address.trim(),
         contact_person: form.contactPerson.trim(),
@@ -127,15 +205,41 @@ function CheckoutPage() {
 
               <div className="space-y-6">
                 <div className="grid gap-6 md:grid-cols-2">
-                  <Field label="Wilaya">
+                  <Field label="Country">
                     <select
-                      value={form.wilaya}
-                      onChange={(event) => updateField('wilaya', event.target.value)}
+                      value={form.countryId || ''}
+                      onChange={(event) => {
+                        const v = Number(event.target.value)
+                        updateField('countryId', v)
+                        updateField('stateId', 0)
+                      }}
                       className="checkout-input"
+                      disabled={countriesQuery.isLoading}
+                      required
                     >
-                      {WILAYAS.map((wilaya) => (
-                        <option key={wilaya} value={wilaya}>
-                          {wilaya}
+                      <option value="">Select country</option>
+                      {(countriesQuery.data?.items ?? []).map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+
+                  <Field label="Wilaya / state">
+                    <select
+                      value={form.stateId || ''}
+                      onChange={(event) =>
+                        updateField('stateId', Number(event.target.value))
+                      }
+                      className="checkout-input"
+                      disabled={form.countryId <= 0 || statesQuery.isLoading}
+                      required
+                    >
+                      <option value="">Select zone</option>
+                      {(statesQuery.data?.items ?? []).map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.code} {s.name}
                         </option>
                       ))}
                     </select>
@@ -177,15 +281,15 @@ function CheckoutPage() {
                   </Field>
 
                   <Field label="Phone Number">
-                    <div className="relative">
-                      <span className="text-(--on-surface-variant) pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-sm font-bold">
+                    <div className="focus-within:bg-(--surface-container-highest) focus-within:shadow-[inset_0_-2px_0_var(--primary)] flex min-h-11 items-stretch overflow-hidden rounded-xl bg-(--surface-container-lowest) shadow-[inset_0_-2px_0_transparent] transition-[background-color,box-shadow]">
+                      <span className="text-(--on-surface-variant) flex shrink-0 items-center border-r border-[color-mix(in_oklab,var(--outline-variant)_40%,transparent)] px-3 text-sm font-bold select-none">
                         +213
                       </span>
                       <input
                         type="tel"
                         value={form.phone}
                         onChange={(event) => updateField('phone', event.target.value)}
-                        className="checkout-input pl-16"
+                        className="min-h-11 min-w-0 flex-1 border-0 bg-transparent px-3 py-3 text-(--on-surface) outline-none placeholder:text-[color-mix(in_oklab,var(--on-surface-variant)_75%,white)]"
                         placeholder="0XXXXXXX"
                         required
                       />
@@ -298,11 +402,17 @@ function CheckoutPage() {
               </div>
 
               <div className="mt-8 flex flex-col gap-4">
+                {!canPlaceOrder && items.length > 0 ? (
+                  <p className="text-(--error) m-0 text-center text-xs leading-relaxed" role="status">
+                    Select a country and a wilaya (delivery zone) before confirming your
+                    order.
+                  </p>
+                ) : null}
                 <button
                   type="submit"
                   form="checkout-form"
-                  disabled={orderMutation.isPending || items.length === 0}
-                  className="text-(--on-primary) flex h-16 w-full items-center justify-center gap-3 rounded-lg bg-[linear-gradient(120deg,var(--primary),var(--primary-container))] text-sm font-black tracking-[0.16em] uppercase"
+                  disabled={orderMutation.isPending || !canPlaceOrder}
+                  className="text-(--on-primary) flex h-16 w-full items-center justify-center gap-3 rounded-lg bg-[linear-gradient(120deg,var(--primary),var(--primary-container))] text-sm font-black tracking-[0.16em] uppercase disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {orderMutation.isPending ? 'Submitting Order' : 'Confirm Order'}
                   <span className="material-symbols-outlined text-base">arrow_forward</span>
@@ -320,7 +430,7 @@ function CheckoutPage() {
                 <p className="text-(--on-surface-variant) m-0 mt-3 text-sm leading-relaxed">
                   {summary.totalWeightKg > 5000
                     ? 'This load exceeds 5 tonnes and requires a truck-accessible unloading zone.'
-                    : 'This volume is compatible with reinforced standard delivery within 48 hours.'}
+                    : 'Shipping follows the rate configured for your selected delivery zone.'}
                 </p>
               </div>
 

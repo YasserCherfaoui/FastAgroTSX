@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 
@@ -40,6 +41,8 @@ const CartContext = createContext<CartContextValue | null>(null)
 
 export function CartProvider({ children }: PropsWithChildren) {
   const [items, setItems] = useState<CartItem[]>([])
+  /** Prevents the persist effect from running on the first commit while `items` is still []. */
+  const skipInitialPersist = useRef(true)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -57,6 +60,10 @@ export function CartProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (typeof window === 'undefined') return
+    if (skipInitialPersist.current) {
+      skipInitialPersist.current = false
+      return
+    }
     window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
   }, [items])
 

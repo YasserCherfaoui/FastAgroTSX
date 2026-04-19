@@ -24,7 +24,13 @@ function MyAccountPage() {
   const profileName = user?.full_name || user?.email || 'Client Fast-Agros'
   const companyName = user?.company_name || 'Entreprise cliente'
   const accountType = user?.account_type || 'Compte professionnel'
-  const location = [user?.wilaya, user?.address].filter(Boolean).join(' | ')
+  const location = [
+    user?.country_name,
+    user?.state_name ?? user?.wilaya,
+    user?.address,
+  ]
+    .filter(Boolean)
+    .join(' | ')
 
   return (
     <main className="bg-(--surface) min-h-screen px-6 py-12 md:py-20 lg:px-8">
@@ -81,7 +87,14 @@ function MyAccountPage() {
                 <InfoBlock label="Responsable principal" value={profileName} />
                 <InfoBlock label="Email" value={user?.email || 'Non disponible'} mono />
                 <InfoBlock label="Téléphone" value={user?.phone || 'Non renseigné'} />
-                <InfoBlock label="Wilaya" value={user?.wilaya || 'Non renseignée'} />
+                <InfoBlock
+                  label="Pays"
+                  value={user?.country_name || '—'}
+                />
+                <InfoBlock
+                  label="Wilaya / état"
+                  value={user?.state_name || user?.wilaya || 'Non renseigné'}
+                />
                 <InfoBlock label="RC" value={user?.rc_number || 'Non renseigné'} mono />
                 <InfoBlock label="NIF" value={user?.nif || 'Non renseigné'} mono />
               </div>
@@ -126,7 +139,7 @@ function MyAccountPage() {
                   Livraison par défaut
                 </p>
                 <p className="mt-4 text-sm leading-7 whitespace-pre-line text-(--on-surface)">
-                  {formatAddress(user?.address, user?.wilaya)}
+                  {formatAddress(user?.address, user?.state_name, user?.country_name)}
                 </p>
               </div>
               <div className="bg-(--surface-container-lowest) rounded-[20px] p-6">
@@ -330,8 +343,8 @@ function AccountLink({
   )
 }
 
-function formatAddress(address?: string, wilaya?: string) {
-  return [address, wilaya, 'Algérie'].filter(Boolean).join('\n')
+function formatAddress(address?: string, state?: string, country?: string) {
+  return [address, state, country].filter(Boolean).join('\n')
 }
 
 function getStatusClasses(status: string) {

@@ -146,7 +146,14 @@ function OrderSuccessPage() {
                 <p className="text-(--on-surface-variant) m-0 mt-5 text-sm leading-7">
                   {order.contact_person}
                   <br />
-                  {order.address}, {order.city}, {order.wilaya}
+                  {[
+                    order.address,
+                    order.city,
+                    order.state_name || order.wilaya,
+                    order.country_name,
+                  ]
+                    .filter(Boolean)
+                    .join(', ')}
                   <br />
                   {order.customer_phone}
                 </p>
