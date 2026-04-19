@@ -55,7 +55,7 @@ export default function ProductCard({ product, onAddToCart, isJustAdded = false 
               key={`${product.id}-${tier.label}`}
               className={`flex items-center justify-between rounded-lg p-3 ${
                 tier.highlighted
-                  ? 'bg-(--primary-container) text-(--on-primary)'
+                  ? 'bg-(--primary-container) text-white'
                   : 'bg-(--surface-container-low)'
               }`}
             >
@@ -87,7 +87,7 @@ export default function ProductCard({ product, onAddToCart, isJustAdded = false 
         <button
           type="button"
           onClick={() => onAddToCart?.(product)}
-          className="bg-(--on-surface) text-(--surface) hover:bg-primary flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-bold transition-colors"
+            className="bg-(--on-surface) text-(--surface) hover:bg-primary hover:text-(--on-primary) flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-bold transition-colors"
         >
           <span className="material-symbols-outlined text-sm">shopping_cart</span>
           Ajouter au panier

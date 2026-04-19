@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 
@@ -20,6 +21,8 @@ export type CartItem = {
   quantity: number
   unitLabel: string
   unitWeightKg: number
+  /** VAT rate in basis points (100 bps = 1%). */
+  taxRateBps: number
   priceTiers: Array<{
     label: string
     amountDa: number
@@ -40,6 +43,8 @@ const CartContext = createContext<CartContextValue | null>(null)
 
 export function CartProvider({ children }: PropsWithChildren) {
   const [items, setItems] = useState<CartItem[]>([])
+  /** Prevents the persist effect from running on the first commit while `items` is still []. */
+  const skipInitialPersist = useRef(true)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -48,7 +53,9 @@ export function CartProvider({ children }: PropsWithChildren) {
     try {
       const parsed: unknown = JSON.parse(raw)
       if (Array.isArray(parsed)) {
-        setItems(parsed.filter(isCartItem))
+        setItems(
+          parsed.filter(isCartItemLoose).map(normalizeCartItem),
+        )
       }
     } catch {
       /* ignore invalid persisted cart */
@@ -57,6 +64,10 @@ export function CartProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (typeof window === 'undefined') return
+    if (skipInitialPersist.current) {
+      skipInitialPersist.current = false
+      return
+    }
     window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
   }, [items])
 
@@ -80,8 +91,9 @@ export function CartProvider({ children }: PropsWithChildren) {
           imageUrl: product.imageUrl,
           category: product.category,
           quantity: 1,
-          unitLabel: 'unites',
-          unitWeightKg: 1,
+          unitLabel: product.unitLabel,
+          unitWeightKg: product.unitWeightKg,
+          taxRateBps: product.taxRateBps,
           priceTiers: product.priceTiers,
         },
       ]
@@ -145,7 +157,7 @@ function extractTierMinQuantity(label: string): number {
   return match ? Number(match[1]) : 1
 }
 
-function isCartItem(value: unknown): value is CartItem {
+function isCartItemLoose(value: unknown): boolean {
   if (typeof value !== 'object' || value === null) return false
   const item = value as Record<string, unknown>
   return (
@@ -154,8 +166,33 @@ function isCartItem(value: unknown): value is CartItem {
     typeof item.imageUrl === 'string' &&
     typeof item.category === 'string' &&
     typeof item.quantity === 'number' &&
-    typeof item.unitLabel === 'string' &&
-    typeof item.unitWeightKg === 'number' &&
     Array.isArray(item.priceTiers)
   )
+}
+
+function normalizeCartItem(value: unknown): CartItem {
+  const item = value as Record<string, unknown>
+  const unitLabel =
+    typeof item.unitLabel === 'string' && item.unitLabel.length > 0
+      ? item.unitLabel
+      : 'unites'
+  let unitWeightKg = 1
+  if (typeof item.unitWeightKg === 'number' && item.unitWeightKg > 0) {
+    unitWeightKg = item.unitWeightKg
+  }
+  let taxRateBps = 1900
+  if (typeof item.taxRateBps === 'number' && item.taxRateBps >= 0) {
+    taxRateBps = item.taxRateBps
+  }
+  return {
+    productId: item.productId as number,
+    name: item.name as string,
+    imageUrl: item.imageUrl as string,
+    category: item.category as string,
+    quantity: item.quantity as number,
+    unitLabel,
+    unitWeightKg,
+    taxRateBps,
+    priceTiers: item.priceTiers as CartItem['priceTiers'],
+  }
 }

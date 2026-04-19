@@ -1,11 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { GoogleSignInButton } from '../components/google-sign-in-button'
 import { authPageRouteOptions } from '../lib/auth-guards'
 import { useRegisterMutation } from '../lib/auth-queries'
+import { fetchCatalogueCountries, fetchCatalogueStates } from '../lib/api'
 
 export const Route = createFileRoute('/register')({
   ...authPageRouteOptions,
@@ -52,7 +55,8 @@ function RegisterPage() {
         (value) => !value || (value.length >= 8 && /^[0-9\s]+$/.test(value)),
         'NIF invalide',
       ),
-    wilaya: z.string().trim().min(2, 'Wilaya requise'),
+    countryId: z.coerce.number().int().min(1, 'Pays requis'),
+    stateId: z.coerce.number().int().min(1, 'Wilaya / etat requis'),
     address: z.string().trim().min(5, 'Adresse requise'),
     fullName: z.string().trim().min(2, 'Nom complet requis'),
     email: z.email('Email invalide'),
@@ -80,7 +84,8 @@ function RegisterPage() {
       accountType: undefined,
       rcNumber: '',
       nif: '',
-      wilaya: '16 Alger',
+      countryId: 0,
+      stateId: 0,
       address: '',
       fullName: '',
       email: '',
@@ -95,9 +100,38 @@ function RegisterPage() {
     register,
     handleSubmit,
     trigger,
+    setValue,
+    getValues,
     formState: { errors, isSubmitting },
     watch,
   } = form
+
+  const countriesQuery = useQuery({
+    queryKey: ['catalogue', 'geo', 'countries'],
+    queryFn: fetchCatalogueCountries,
+  })
+  const countryId = watch('countryId')
+  const stateId = watch('stateId')
+  const statesQuery = useQuery({
+    queryKey: ['catalogue', 'geo', 'states', countryId],
+    queryFn: () => fetchCatalogueStates(countryId),
+    enabled: countryId > 0,
+  })
+
+  useEffect(() => {
+    const items = countriesQuery.data?.items ?? []
+    if (items.length && getValues('countryId') === 0) {
+      setValue('countryId', items[0].id)
+    }
+  }, [countriesQuery.data, getValues, setValue])
+
+  useEffect(() => {
+    const items = statesQuery.data?.items ?? []
+    if (!items.length) return
+    if (!items.some((s) => s.id === stateId)) {
+      setValue('stateId', items[0].id)
+    }
+  }, [statesQuery.data, stateId, setValue])
 
   const selectedAccountType = watch('accountType')
 
@@ -110,7 +144,7 @@ function RegisterPage() {
         full_name: data.fullName,
         company_name: data.companyName,
         account_type: data.accountType,
-        wilaya: data.wilaya,
+        state_id: data.stateId,
         address: data.address,
         phone: data.phone,
         ...(data.rcNumber?.trim() ? { rc_number: data.rcNumber.trim() } : {}),
@@ -129,7 +163,8 @@ function RegisterPage() {
         'accountType',
         'rcNumber',
         'nif',
-        'wilaya',
+        'countryId',
+        'stateId',
         'address',
       ])
       if (!valid) return
@@ -199,6 +234,17 @@ function RegisterPage() {
               de gros industriels.
             </p>
           </header>
+
+          <div className="mb-10 space-y-4">
+            <GoogleSignInButton redirectAfterLogin="/" />
+            <div className="relative flex items-center py-1">
+              <div className="grow border-t border-(--outline-variant)" />
+              <span className="text-(--outline) mx-4 shrink-0 text-xs font-bold tracking-[0.12em] uppercase">
+                OU
+              </span>
+              <div className="grow border-t border-(--outline-variant)" />
+            </div>
+          </div>
 
           <form className="space-y-8" onSubmit={handleSubmit(onSubmit)} noValidate>
             {registerMutation.isError ? (
@@ -418,23 +464,45 @@ function RegisterPage() {
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
                   <label className="text-secondary mb-2 block text-xs font-bold tracking-[0.14em] uppercase">
-                    Wilaya
+                    Pays
                   </label>
                   <select
-                    {...register('wilaya')}
+                    {...register('countryId', { valueAsNumber: true })}
                     className="bg-(--surface-container-low) focus:bg-(--surface-container-highest) focus:border-primary h-11 w-full appearance-none rounded-lg border-0 border-b-2 border-transparent px-4 text-(--on-surface) transition-all focus:outline-none"
+                    disabled={countriesQuery.isLoading}
                   >
-                    <option>01 Adrar</option>
-                    <option>02 Chlef</option>
-                    <option>06 Bejaia</option>
-                    <option>16 Alger</option>
-                    <option>31 Oran</option>
+                    <option value={0}>Chargement...</option>
+                    {(countriesQuery.data?.items ?? []).map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
                   </select>
-                  {errors.wilaya ? (
-                    <p className="text-(--error) mt-1 text-xs">{errors.wilaya.message}</p>
+                  {errors.countryId ? (
+                    <p className="text-(--error) mt-1 text-xs">{errors.countryId.message}</p>
                   ) : null}
                 </div>
                 <div>
+                  <label className="text-secondary mb-2 block text-xs font-bold tracking-[0.14em] uppercase">
+                    Wilaya / etat
+                  </label>
+                  <select
+                    {...register('stateId', { valueAsNumber: true })}
+                    className="bg-(--surface-container-low) focus:bg-(--surface-container-highest) focus:border-primary h-11 w-full appearance-none rounded-lg border-0 border-b-2 border-transparent px-4 text-(--on-surface) transition-all focus:outline-none"
+                    disabled={countryId <= 0 || statesQuery.isLoading}
+                  >
+                    <option value={0}>Chargement...</option>
+                    {(statesQuery.data?.items ?? []).map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.code} {s.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.stateId ? (
+                    <p className="text-(--error) mt-1 text-xs">{errors.stateId.message}</p>
+                  ) : null}
+                </div>
+                <div className="md:col-span-2">
                   <label className="text-secondary mb-2 block text-xs font-bold tracking-[0.14em] uppercase">
                     Adresse
                   </label>

@@ -385,7 +385,7 @@ function ProductDetailsPage() {
                       <div>
                         <p
                           className={`m-0 text-sm font-bold ${
-                            isActive ? 'text-(--on-surface)' : ''
+                            isActive ? 'text-(--on-primary)' : ''
                           }`}
                         >
                           {tier.label}
@@ -393,7 +393,7 @@ function ProductDetailsPage() {
                         <p
                           className={`m-0 mt-1 text-xs ${
                             isActive
-                              ? 'text-(--on-surface)'
+                              ? 'text-(--on-primary)'
                               : 'text-(--outline)'
                           }`}
                           style={isActive ? { opacity: 0.82 } : undefined}
@@ -404,14 +404,14 @@ function ProductDetailsPage() {
                       <div className="text-right">
                         <p
                           className={`font-headline m-0 text-xl font-extrabold ${
-                            isActive ? 'text-(--on-surface)' : ''
+                            isActive ? 'text-(--on-primary)' : ''
                           }`}
                         >
                           {formatDa(centsToDa(tier.price_cents))}
                         </p>
                         <p
                           className={`m-0 mt-1 text-[11px] ${
-                            isActive ? 'text-(--on-surface)' : 'text-(--outline)'
+                            isActive ? 'text-(--on-primary)' : 'text-(--outline)'
                           }`}
                           style={isActive ? { opacity: 0.82 } : undefined}
                         >

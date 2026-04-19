@@ -76,6 +76,10 @@ export type Product = {
   name: string
   description: string
   price_cents: number
+  /** VAT/TVA rate in basis points (100 bps = 1%; e.g. 1900 = 19%). */
+  tax_rate_bps?: number
+  /** Weight per unit in kilograms (logistics, purchase summary). */
+  weight_kg?: number
   best_seller?: boolean
   category_id?: number | null
   category?: Category | null
@@ -125,6 +129,12 @@ export type CatalogueProductCard = {
   stockLabel: string
   shippingLabel: string
   stockTone: ProductStockTone
+  /** Unit label for quantity (from specs or default). */
+  unitLabel: string
+  /** Weight per unit in kg (from product). */
+  unitWeightKg: number
+  /** VAT rate in basis points (e.g. 1900 = 19%). */
+  taxRateBps: number
 }
 
 export function formatDa(amountDa: number): string {
@@ -164,6 +174,21 @@ function centsToDa(cents: number): number {
   return Math.round(cents / 100)
 }
 
+function inferUnitLabel(p: Product): string {
+  const spec = p.specifications?.find((s) => {
+    const k = s.spec_key.toLowerCase()
+    return k === 'unit_label' || k === 'unite'
+  })
+  const v = spec?.spec_value?.trim()
+  return v && v.length > 0 ? v : 'unites'
+}
+
+/** TVA amount in DZD for a line subtotal and rate in bps. */
+export function taxDaFromLineSubtotal(subtotalDa: number, taxRateBps: number): number {
+  const bps = Math.min(10000, Math.max(0, taxRateBps))
+  return Math.round((subtotalDa * bps) / 10000)
+}
+
 /** Map API product payload to card props for the catalogue grid. */
 export function productToCatalogueCard(p: Product): CatalogueProductCard {
   const imageUrl = p.images?.[0]?.public_url ?? PLACEHOLDER_IMAGE
@@ -200,6 +225,13 @@ export function productToCatalogueCard(p: Product): CatalogueProductCard {
     badges.push({ label: 'Catalogue', tone: 'neutral' })
   }
 
+  const taxRateBps =
+    typeof p.tax_rate_bps === 'number' && p.tax_rate_bps >= 0 ? p.tax_rate_bps : 1900
+  const unitWeightKg =
+    typeof p.weight_kg === 'number' && p.weight_kg > 0 && Number.isFinite(p.weight_kg)
+      ? p.weight_kg
+      : 1
+
   return {
     id: String(p.id),
     imageUrl,
@@ -210,6 +242,9 @@ export function productToCatalogueCard(p: Product): CatalogueProductCard {
     stockLabel: 'Disponible',
     shippingLabel: 'Livraison B2B',
     stockTone: 'primary',
+    unitLabel: inferUnitLabel(p),
+    unitWeightKg,
+    taxRateBps,
   }
 }
 

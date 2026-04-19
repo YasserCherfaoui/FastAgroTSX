@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { fetchMyOrder } from '../lib/api'
 import { requireAuthentication } from '../lib/auth-guards'
+import { formatShippingLine } from '../lib/logistics-label'
 import { formatDa } from '../models/product'
 
 export const Route = createFileRoute('/orders/success/$orderId')({
@@ -146,7 +147,14 @@ function OrderSuccessPage() {
                 <p className="text-(--on-surface-variant) m-0 mt-5 text-sm leading-7">
                   {order.contact_person}
                   <br />
-                  {order.address}, {order.city}, {order.wilaya}
+                  {[
+                    order.address,
+                    order.city,
+                    order.state_name || order.wilaya,
+                    order.country_name,
+                  ]
+                    .filter(Boolean)
+                    .join(', ')}
                   <br />
                   {order.customer_phone}
                 </p>
@@ -191,7 +199,11 @@ function OrderSuccessPage() {
                   />
                   <SummaryRow
                     label="Livraison"
-                    value={formatDa(Math.round(order.shipping_cents / 100))}
+                    value={formatShippingLine({
+                      feeDa: Math.round(order.shipping_cents / 100),
+                      shippingCents: order.shipping_cents,
+                      stateName: order.state_name || order.wilaya,
+                    })}
                   />
                 </div>
 
@@ -220,7 +232,9 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4">
       <span className="text-(--on-surface-variant) text-sm">{label}</span>
-      <span className="font-bold text-(--on-surface)">{value}</span>
+      <span className="max-w-[min(100%,14rem)] text-right text-sm font-bold leading-snug text-(--on-surface)">
+        {value}
+      </span>
     </div>
   )
 }

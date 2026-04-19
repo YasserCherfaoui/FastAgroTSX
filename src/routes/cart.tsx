@@ -1,8 +1,11 @@
+import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMemo } from 'react'
-import { getAuthToken } from '../lib/auth-session'
+import { fetchCatalogueCountries, fetchCatalogueStates } from '../lib/api'
+import { getAuthToken, getAuthUser } from '../lib/auth-session'
 import { getActiveCartTier, useCart } from '../lib/cart'
-import { formatDa } from '../models/product'
+import { formatShippingLine } from '../lib/logistics-label'
+import { formatDa, taxDaFromLineSubtotal } from '../models/product'
 
 export const Route = createFileRoute('/cart')({
   component: CartPage,
@@ -11,6 +14,34 @@ export const Route = createFileRoute('/cart')({
 function CartPage() {
   const navigate = useNavigate()
   const { items, clearCart, removeItem, updateQuantity } = useCart()
+  const authUser = getAuthUser()
+
+  const countriesQuery = useQuery({
+    queryKey: ['catalogue', 'geo', 'countries'],
+    queryFn: fetchCatalogueCountries,
+  })
+  const countryId =
+    authUser?.country_id ?? countriesQuery.data?.items[0]?.id ?? 0
+  const statesQuery = useQuery({
+    queryKey: ['catalogue', 'geo', 'states', countryId],
+    queryFn: () => fetchCatalogueStates(countryId),
+    enabled: countryId > 0,
+  })
+
+  const states = statesQuery.data?.items ?? []
+  const userStateId = authUser?.state_id
+  const matchedUserState =
+    userStateId != null ? states.find((s) => s.id === userStateId) : undefined
+
+  const needsGeoForUserZone = !!getAuthToken() && userStateId != null
+  const geoResolved =
+    countryId > 0 &&
+    !statesQuery.isLoading &&
+    !statesQuery.isFetching &&
+    !statesQuery.isError
+  const waitingForGeoToValidateUser = needsGeoForUserZone && !geoResolved
+  const userDeliveryZoneInvalid =
+    needsGeoForUserZone && geoResolved && !matchedUserState
 
   const summary = useMemo(() => {
     const subtotal = items.reduce((sum, item) => {
@@ -18,22 +49,48 @@ function CartPage() {
       return sum + activeTier.amountDa * item.quantity
     }, 0)
 
+    const taxes = items.reduce((sum, item) => {
+      const activeTier = getActiveCartTier(item)
+      const lineSub = activeTier.amountDa * item.quantity
+      return sum + taxDaFromLineSubtotal(lineSub, item.taxRateBps)
+    }, 0)
+
     const totalWeightKg = items.reduce(
       (sum, item) => sum + item.unitWeightKg * item.quantity,
       0,
     )
-    const logisticsFee = items.length === 0 ? 0 : totalWeightKg > 5000 ? 12500 : 6500
-    const taxes = Math.round(subtotal * 0.19)
+    // Logged-in user with a profile state not in the active catalogue: no fallback rate.
+    const st =
+      userDeliveryZoneInvalid
+        ? undefined
+        : matchedUserState ?? (userStateId == null ? states[0] : undefined)
+    const shippingCents =
+      st?.shipping_cents ?? (userDeliveryZoneInvalid ? 0 : 650000)
+    const logisticsFee =
+      items.length === 0 ? 0 : Math.round(shippingCents / 100)
 
     return {
       subtotal,
       totalWeightKg,
       logisticsFee,
+      shippingCentsUsed: items.length === 0 ? 0 : shippingCents,
+      deliveryStateName: userDeliveryZoneInvalid ? undefined : st?.name,
       taxes,
       total: subtotal + logisticsFee + taxes,
       totalUnits: items.reduce((sum, item) => sum + item.quantity, 0),
     }
-  }, [items])
+  }, [
+    items,
+    states,
+    matchedUserState,
+    userStateId,
+    userDeliveryZoneInvalid,
+  ])
+
+  const canProceedToCheckout =
+    items.length > 0 &&
+    !userDeliveryZoneInvalid &&
+    !waitingForGeoToValidateUser
 
   return (
     <main className="bg-(--surface) text-(--on-surface) min-h-screen px-6 py-12 md:py-20 lg:px-8">
@@ -140,7 +197,18 @@ function CartPage() {
                               </label>
 
                               <span className="text-(--on-surface-variant) text-xs">
-                                {formatDa(activeTier.amountDa)} / {item.unitLabel.slice(0, -1)}
+                                {formatDa(activeTier.amountDa)} /{' '}
+                                {item.unitLabel.replace(/s$/, '')} ·{' '}
+                                {(item.unitWeightKg * item.quantity).toLocaleString('fr-FR', {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 2,
+                                })}{' '}
+                                kg · TVA{' '}
+                                {(item.taxRateBps / 100).toLocaleString('fr-FR', {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 2,
+                                })}
+                                %
                               </span>
                               <button
                                 type="button"
@@ -194,7 +262,14 @@ function CartPage() {
                   <span className="text-(--outline) text-xs font-bold tracking-[0.16em] uppercase">
                     Frais de logistique
                   </span>
-                  <span className="text-lg font-bold">{formatDa(summary.logisticsFee)}</span>
+                  <span className="max-w-[min(100%,14rem)] text-right text-lg font-bold leading-snug">
+                    {formatShippingLine({
+                      feeDa: summary.logisticsFee,
+                      shippingCents: summary.shippingCentsUsed,
+                      stateName: summary.deliveryStateName,
+                      suppressFreeMessage: items.length === 0,
+                    })}
+                  </span>
                 </div>
                 <div className="flex items-baseline justify-between gap-4">
                   <span className="text-(--outline) text-xs font-bold tracking-[0.16em] uppercase">
@@ -218,9 +293,24 @@ function CartPage() {
               </div>
 
               <div className="mt-8 space-y-4">
+                {userDeliveryZoneInvalid ? (
+                  <div
+                    className="bg-[color-mix(in_oklab,var(--error)_12%,white)] text-(--error) rounded-lg px-4 py-3 text-sm leading-relaxed"
+                    role="alert"
+                  >
+                    Votre wilaya enregistree n&apos;est plus desservie ou inactive.
+                    Mettez a jour votre zone de livraison (contact support) avant de
+                    commander.
+                  </div>
+                ) : null}
+                {waitingForGeoToValidateUser ? (
+                  <p className="text-(--on-surface-variant) m-0 text-center text-xs">
+                    Verification de votre zone de livraison...
+                  </p>
+                ) : null}
                 <button
                   type="button"
-                  disabled={items.length === 0}
+                  disabled={!canProceedToCheckout}
                   onClick={() => {
                     if (!getAuthToken()) {
                       void navigate({
@@ -229,9 +319,10 @@ function CartPage() {
                       })
                       return
                     }
+                    if (!canProceedToCheckout) return
                     void navigate({ to: '/checkout' })
                   }}
-                  className="text-(--on-primary) flex h-14 w-full items-center justify-center gap-2 rounded-lg bg-[linear-gradient(120deg,var(--primary),var(--primary-container))] text-sm font-black tracking-[0.12em] uppercase no-underline"
+                  className="text-(--on-primary) flex h-14 w-full items-center justify-center gap-2 rounded-lg bg-[linear-gradient(120deg,var(--primary),var(--primary-container))] text-sm font-black tracking-[0.12em] uppercase no-underline disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Passer a la livraison
                   <span className="material-symbols-outlined text-base">chevron_right</span>

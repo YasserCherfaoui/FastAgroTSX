@@ -12,6 +12,26 @@ export function getApiBaseUrl(): string {
   return DEFAULT_API
 }
 
+/** Starts the browser Google OAuth flow (API redirects to Google, then back to `/auth/callback`). */
+export function getGoogleAuthStartUrl(redirectAfterLogin: string): string {
+  const base = getApiBaseUrl()
+  const path = sanitizeOAuthRedirectPath(redirectAfterLogin)
+  const params = new URLSearchParams()
+  if (path !== '/') {
+    params.set('redirect', path)
+  }
+  const q = params.toString()
+  return `${base}/api/v1/auth/google${q ? `?${q}` : ''}`
+}
+
+function sanitizeOAuthRedirectPath(path: string): string {
+  const p = path.trim()
+  if (p === '' || !p.startsWith('/') || p.startsWith('//')) {
+    return '/'
+  }
+  return p
+}
+
 export async function readApiError(res: Response): Promise<string> {
   const data: unknown = await res.json().catch(() => ({}))
   if (
@@ -72,10 +92,44 @@ export type RegisterRequest = {
   account_type: string
   rc_number?: string | null
   nif?: string | null
-  wilaya: string
+  state_id: number
   address: string
   phone: string
   user_type?: string
+}
+
+/** Public catalogue geo — matches serverside `PublicCountry`. */
+export type CatalogueCountry = {
+  id: number
+  code: string
+  name: string
+  sort_order: number
+}
+
+/** Public catalogue geo — matches serverside `PublicState`. */
+export type CatalogueState = {
+  id: number
+  country_id: number
+  code: string
+  name: string
+  sort_order: number
+  shipping_cents: number
+}
+
+export async function fetchCatalogueCountries(): Promise<{ items: CatalogueCountry[] }> {
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/catalogue/geo/countries`)
+  if (!res.ok) throw new Error(await readApiError(res))
+  return res.json() as Promise<{ items: CatalogueCountry[] }>
+}
+
+export async function fetchCatalogueStates(
+  countryId: number,
+): Promise<{ items: CatalogueState[] }> {
+  const res = await fetch(
+    `${getApiBaseUrl()}/api/v1/catalogue/geo/countries/${countryId}/states`,
+  )
+  if (!res.ok) throw new Error(await readApiError(res))
+  return res.json() as Promise<{ items: CatalogueState[] }>
 }
 
 export async function registerRequest(body: RegisterRequest): Promise<AuthResponse> {
@@ -182,7 +236,7 @@ export async function fetchCatalogueProduct(id: number): Promise<Product> {
 }
 
 export type CreateOrderRequest = {
-  wilaya: string
+  state_id: number
   city: string
   address: string
   contact_person: string
@@ -224,7 +278,10 @@ export type Order = {
   user_type: string
   rc_number?: string | null
   nif?: string | null
-  wilaya: string
+  state_id?: number | null
+  state_name?: string
+  country_name?: string
+  wilaya?: string
   city: string
   address: string
   contact_person: string

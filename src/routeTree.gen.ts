@@ -17,10 +17,12 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CatalogueRouteImport } from './routes/catalogue'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OrdersIndexRouteImport } from './routes/orders.index'
 import { Route as ProductsProductIdRouteImport } from './routes/products.$productId'
 import { Route as OrdersOrderIdRouteImport } from './routes/orders.$orderId'
 import { Route as CatalogueProductIdRouteImport } from './routes/catalogue.$productId'
 import { Route as CatalgoueProductIdRouteImport } from './routes/catalgoue.$productId'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as OrdersSuccessOrderIdRouteImport } from './routes/orders.success.$orderId'
 
 const RegisterRoute = RegisterRouteImport.update({
@@ -63,6 +65,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrdersIndexRoute = OrdersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OrdersRoute,
+} as any)
 const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
   id: '/products/$productId',
   path: '/products/$productId',
@@ -83,6 +90,11 @@ const CatalgoueProductIdRoute = CatalgoueProductIdRouteImport.update({
   path: '/catalgoue/$productId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrdersSuccessOrderIdRoute = OrdersSuccessOrderIdRouteImport.update({
   id: '/success/$orderId',
   path: '/success/$orderId',
@@ -98,10 +110,12 @@ export interface FileRoutesByFullPath {
   '/my-account': typeof MyAccountRoute
   '/orders': typeof OrdersRouteWithChildren
   '/register': typeof RegisterRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/catalgoue/$productId': typeof CatalgoueProductIdRoute
   '/catalogue/$productId': typeof CatalogueProductIdRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
   '/products/$productId': typeof ProductsProductIdRoute
+  '/orders/': typeof OrdersIndexRoute
   '/orders/success/$orderId': typeof OrdersSuccessOrderIdRoute
 }
 export interface FileRoutesByTo {
@@ -111,12 +125,13 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/login': typeof LoginRoute
   '/my-account': typeof MyAccountRoute
-  '/orders': typeof OrdersRouteWithChildren
   '/register': typeof RegisterRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/catalgoue/$productId': typeof CatalgoueProductIdRoute
   '/catalogue/$productId': typeof CatalogueProductIdRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
   '/products/$productId': typeof ProductsProductIdRoute
+  '/orders': typeof OrdersIndexRoute
   '/orders/success/$orderId': typeof OrdersSuccessOrderIdRoute
 }
 export interface FileRoutesById {
@@ -129,10 +144,12 @@ export interface FileRoutesById {
   '/my-account': typeof MyAccountRoute
   '/orders': typeof OrdersRouteWithChildren
   '/register': typeof RegisterRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/catalgoue/$productId': typeof CatalgoueProductIdRoute
   '/catalogue/$productId': typeof CatalogueProductIdRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
   '/products/$productId': typeof ProductsProductIdRoute
+  '/orders/': typeof OrdersIndexRoute
   '/orders/success/$orderId': typeof OrdersSuccessOrderIdRoute
 }
 export interface FileRouteTypes {
@@ -146,10 +163,12 @@ export interface FileRouteTypes {
     | '/my-account'
     | '/orders'
     | '/register'
+    | '/auth/callback'
     | '/catalgoue/$productId'
     | '/catalogue/$productId'
     | '/orders/$orderId'
     | '/products/$productId'
+    | '/orders/'
     | '/orders/success/$orderId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -159,12 +178,13 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/login'
     | '/my-account'
-    | '/orders'
     | '/register'
+    | '/auth/callback'
     | '/catalgoue/$productId'
     | '/catalogue/$productId'
     | '/orders/$orderId'
     | '/products/$productId'
+    | '/orders'
     | '/orders/success/$orderId'
   id:
     | '__root__'
@@ -176,10 +196,12 @@ export interface FileRouteTypes {
     | '/my-account'
     | '/orders'
     | '/register'
+    | '/auth/callback'
     | '/catalgoue/$productId'
     | '/catalogue/$productId'
     | '/orders/$orderId'
     | '/products/$productId'
+    | '/orders/'
     | '/orders/success/$orderId'
   fileRoutesById: FileRoutesById
 }
@@ -192,6 +214,7 @@ export interface RootRouteChildren {
   MyAccountRoute: typeof MyAccountRoute
   OrdersRoute: typeof OrdersRouteWithChildren
   RegisterRoute: typeof RegisterRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   CatalgoueProductIdRoute: typeof CatalgoueProductIdRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
 }
@@ -254,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/orders/': {
+      id: '/orders/'
+      path: '/'
+      fullPath: '/orders/'
+      preLoaderRoute: typeof OrdersIndexRouteImport
+      parentRoute: typeof OrdersRoute
+    }
     '/products/$productId': {
       id: '/products/$productId'
       path: '/products/$productId'
@@ -282,6 +312,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalgoueProductIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/orders/success/$orderId': {
       id: '/orders/success/$orderId'
       path: '/success/$orderId'
@@ -306,11 +343,13 @@ const CatalogueRouteWithChildren = CatalogueRoute._addFileChildren(
 
 interface OrdersRouteChildren {
   OrdersOrderIdRoute: typeof OrdersOrderIdRoute
+  OrdersIndexRoute: typeof OrdersIndexRoute
   OrdersSuccessOrderIdRoute: typeof OrdersSuccessOrderIdRoute
 }
 
 const OrdersRouteChildren: OrdersRouteChildren = {
   OrdersOrderIdRoute: OrdersOrderIdRoute,
+  OrdersIndexRoute: OrdersIndexRoute,
   OrdersSuccessOrderIdRoute: OrdersSuccessOrderIdRoute,
 }
 
@@ -326,6 +365,7 @@ const rootRouteChildren: RootRouteChildren = {
   MyAccountRoute: MyAccountRoute,
   OrdersRoute: OrdersRouteWithChildren,
   RegisterRoute: RegisterRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   CatalgoueProductIdRoute: CatalgoueProductIdRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
 }

@@ -19,7 +19,9 @@
   --primary: #00450d;
   --primary-container: #1b5e20;
   --primary-fixed: #acf4a4;
-  --on-primary: #000;
+  /* Light text on dark green primary surfaces (avoids black-on-green). */
+  --on-primary: #ffffff;
+  --primary-foreground: var(--on-primary);
   --on-primary-container: #90d689;
   --on-primary-fixed: #002203;
   --on-primary-fixed-variant: #0c5216;
@@ -41,6 +43,8 @@
 @theme inline {
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-headline: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
 }
 
 html,
