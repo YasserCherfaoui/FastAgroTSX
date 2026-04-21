@@ -1,6 +1,13 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from 'react'
 import {
   createOrderRequest,
   fetchCatalogueCountries,
@@ -9,6 +16,7 @@ import {
 import { getAuthUser } from '../lib/auth-session'
 import { requireAuthentication } from '../lib/auth-guards'
 import { getActiveCartTier, useCart } from '../lib/cart'
+import { trackInitiateCheckout } from '../lib/meta-pixel'
 import { formatShippingLine } from '../lib/logistics-label'
 import { formatDa, taxDaFromLineSubtotal } from '../models/product'
 
@@ -156,6 +164,19 @@ function CheckoutPage() {
       total: subtotal + logisticsFee + taxes,
     }
   }, [items, selectedState])
+
+  const initiateCheckoutTracked = useRef(false)
+  useEffect(() => {
+    if (items.length === 0 || initiateCheckoutTracked.current) return
+    initiateCheckoutTracked.current = true
+    const numItems = items.reduce((sum, item) => sum + item.quantity, 0)
+    trackInitiateCheckout({
+      value: summary.total,
+      num_items: numItems,
+      content_ids: items.map((item) => String(item.productId)),
+      currency: 'DZD',
+    })
+  }, [items, summary.total])
 
   const updateField = <K extends keyof ShippingForm>(field: K, value: ShippingForm[K]) => {
     setForm((current) => ({ ...current, [field]: value }))
