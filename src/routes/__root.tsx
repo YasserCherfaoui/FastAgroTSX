@@ -4,6 +4,11 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import AuthSync from '../components/AuthSync'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
+import MetaPixelPageView from '../components/MetaPixelPageView'
+import {
+  getMetaPixelBootstrapScript,
+  getMetaPixelNoscriptUrl,
+} from '../lib/meta-pixel'
 import { CartProvider } from '../lib/cart'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
@@ -31,6 +36,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         title: 'Fast-Agros | Industrial Agriculture Wholesale',
       },
+      {
+        name: 'facebook-domain-verification',
+        content: 'xujpegsmto2fdj4om9xvf154g4rljb',
+      },
     ],
     links: [
       {
@@ -44,19 +53,37 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const metaPixelBootstrap = getMetaPixelBootstrapScript()
+  const metaPixelNoscript = getMetaPixelNoscriptUrl()
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
+        {metaPixelBootstrap ? (
+          <script dangerouslySetInnerHTML={{ __html: metaPixelBootstrap }} />
+        ) : null}
       </head>
       <body className="font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
         <CartProvider>
+          <MetaPixelPageView />
           <AuthSync />
           <Header />
           {children}
           <Footer />
         </CartProvider>
+        {metaPixelNoscript ? (
+          <noscript>
+            <img
+              height="1"
+              width="1"
+              style={{ display: 'none' }}
+              src={metaPixelNoscript}
+              alt=""
+            />
+          </noscript>
+        ) : null}
         <TanStackDevtools
           config={{
             position: 'bottom-right',

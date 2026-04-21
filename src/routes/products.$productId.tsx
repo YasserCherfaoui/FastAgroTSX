@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import ProductCard from '../components/ProductCard'
 import { fetchCatalogueProduct, fetchCatalogueProducts } from '../lib/api'
 import { useCart } from '../lib/cart'
+import { trackViewContent } from '../lib/meta-pixel'
 import { formatDa, productToCatalogueCard } from '../models/product'
 
 function productDetailQueryOptions(productId: number) {
@@ -72,6 +73,22 @@ function ProductDetailsPage() {
     setSelectedImageIndex(0)
     setSelectedTab('description')
     setQuantity(1)
+  }, [product?.id])
+
+  useEffect(() => {
+    if (!product) return
+    const k = `meta_vc_${product.id}`
+    try {
+      if (sessionStorage.getItem(k)) return
+      sessionStorage.setItem(k, '1')
+    } catch {
+      /* private mode */
+    }
+    trackViewContent({
+      content_ids: [String(product.id)],
+      value: centsToDa(product.price_cents),
+      currency: 'DZD',
+    })
   }, [product?.id])
 
   useEffect(() => {

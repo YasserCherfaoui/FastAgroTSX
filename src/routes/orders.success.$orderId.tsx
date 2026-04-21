@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { useEffect } from 'react'
 import { fetchMyOrder } from '../lib/api'
 import { requireAuthentication } from '../lib/auth-guards'
+import { trackPurchase } from '../lib/meta-pixel'
 import { formatShippingLine } from '../lib/logistics-label'
 import { formatDa } from '../models/product'
 
@@ -19,6 +21,31 @@ function OrderSuccessPage() {
   })
 
   const order = orderQuery.data
+
+  useEffect(() => {
+    if (!order) return
+    const storageKey = `meta_purchase_sent_${order.id}`
+    try {
+      if (sessionStorage.getItem(storageKey)) return
+      sessionStorage.setItem(storageKey, '1')
+    } catch {
+      /* private mode */
+    }
+
+    const eventId = `purchase-${order.id}`
+    const value = Math.round(order.total_cents) / 100
+    const contentIds = (order.items ?? [])
+      .map((item) => item.product_id)
+      .filter((id): id is number => typeof id === 'number' && id > 0)
+      .map(String)
+
+    trackPurchase({
+      value,
+      currency: 'DZD',
+      content_ids: contentIds,
+      event_id: eventId,
+    })
+  }, [order])
 
   return (
     <main className="bg-(--surface) min-h-screen px-6 py-12 md:py-20 lg:px-8">

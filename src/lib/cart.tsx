@@ -10,6 +10,7 @@ import {
 } from 'react'
 
 import type { CatalogueProductCard } from '../models/product'
+import { trackAddToCart } from './meta-pixel'
 
 const CART_STORAGE_KEY = 'fastagro_cart'
 
@@ -76,27 +77,37 @@ export function CartProvider({ children }: PropsWithChildren) {
     if (!Number.isFinite(productId) || productId < 1) return
     setItems((current) => {
       const existing = current.find((item) => item.productId === productId)
+      const nextItem: CartItem = existing
+        ? {
+            ...existing,
+            quantity: existing.quantity + 1,
+          }
+        : {
+            productId,
+            name: product.name,
+            imageUrl: product.imageUrl,
+            category: product.category,
+            quantity: 1,
+            unitLabel: product.unitLabel,
+            unitWeightKg: product.unitWeightKg,
+            taxRateBps: product.taxRateBps,
+            priceTiers: product.priceTiers,
+          }
+      const tier = getActiveCartTier(nextItem)
+      queueMicrotask(() => {
+        trackAddToCart({
+          content_ids: [String(productId)],
+          value: tier.amountDa,
+          currency: 'DZD',
+          num_items: 1,
+        })
+      })
       if (existing) {
         return current.map((item) =>
-          item.productId === productId
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
+          item.productId === productId ? nextItem : item,
         )
       }
-      return [
-        ...current,
-        {
-          productId,
-          name: product.name,
-          imageUrl: product.imageUrl,
-          category: product.category,
-          quantity: 1,
-          unitLabel: product.unitLabel,
-          unitWeightKg: product.unitWeightKg,
-          taxRateBps: product.taxRateBps,
-          priceTiers: product.priceTiers,
-        },
-      ]
+      return [...current, nextItem]
     })
   }, [])
 
