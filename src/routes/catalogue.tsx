@@ -1,14 +1,29 @@
 import { useQuery } from '@tanstack/react-query'
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import ProductCard from '../components/ProductCard'
 import ProductListItem from '../components/ProductListItem'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
-import { fetchCatalogueCategories, fetchCatalogueProducts } from '../lib/api'
+import {
+  fetchCatalogueBrands,
+  fetchCatalogueCategories,
+  fetchCatalogueProducts,
+} from '../lib/api'
 import { useCart } from '../lib/cart'
 import { formatDa, productToCatalogueCard } from '../models/product'
 
 export const Route = createFileRoute('/catalogue')({
+  validateSearch: (raw: Record<string, unknown>) => {
+    const b = raw.brandId
+    let brandId: number | undefined
+    if (typeof b === 'number' && Number.isFinite(b) && b > 0) {
+      brandId = Math.floor(b)
+    } else if (typeof b === 'string' && b !== '') {
+      const n = Number.parseInt(b, 10)
+      if (Number.isFinite(n) && n > 0) brandId = n
+    }
+    return { brandId }
+  },
   component: CataloguePage,
 })
 
@@ -22,6 +37,9 @@ function daToPriceCents(da: number): number {
 
 function CataloguePage() {
   const { addItem } = useCart()
+  const navigate = useNavigate()
+  const { brandId: brandIdFromSearch } = Route.useSearch()
+  const brandId = brandIdFromSearch != null && brandIdFromSearch > 0 ? brandIdFromSearch : null
   const [justAddedProductId, setJustAddedProductId] = useState<string | null>(null)
   const [page, setPage] = useState(1)
   const [searchInput, setSearchInput] = useState('')
@@ -32,9 +50,24 @@ function CataloguePage() {
   const [priceMaxDa, setPriceMaxDa] = useState(PRICE_MAX_DA_DEFAULT)
   const [view, setView] = useState<'grid' | 'list'>('grid')
 
+  const setBrandInSearch = useCallback(
+    (id: number | null) => {
+      void navigate({
+        to: '/catalogue',
+        search: (prev) => ({ ...prev, brandId: id ?? undefined }),
+      })
+    },
+    [navigate],
+  )
+
   const categoriesQuery = useQuery({
     queryKey: ['catalogue', 'categories'],
     queryFn: () => fetchCatalogueCategories({ page: 1, perPage: 200 }),
+  })
+
+  const brandsQuery = useQuery({
+    queryKey: ['catalogue', 'brands', 'filters'],
+    queryFn: () => fetchCatalogueBrands({ page: 1, perPage: 200 }),
   })
 
   const filterParams = useMemo(() => {
@@ -47,11 +80,12 @@ function CataloguePage() {
       perPage: PAGE_SIZE,
       q: debouncedSearch,
       categoryId,
+      brandId,
       sort,
       minPriceCents: minCents,
       maxPriceCents: maxCents,
     }
-  }, [page, debouncedSearch, categoryId, sort, priceMinDa, priceMaxDa])
+  }, [page, debouncedSearch, categoryId, brandId, sort, priceMinDa, priceMaxDa])
 
   const productsQuery = useQuery({
     queryKey: ['catalogue', 'products', filterParams],
@@ -75,6 +109,16 @@ function CataloguePage() {
     return categories.find((c) => c.id === categoryId)?.name ?? null
   }, [categories, categoryId])
 
+  const brands = useMemo(() => {
+    const items = brandsQuery.data?.items ?? []
+    return [...items].sort((a, b) => a.name.localeCompare(b.name, 'fr'))
+  }, [brandsQuery.data?.items])
+
+  const selectedBrandName = useMemo(() => {
+    if (brandId == null) return null
+    return brands.find((b) => b.id === brandId)?.name ?? null
+  }, [brands, brandId])
+
   const items = productsQuery.data?.items ?? []
   const pagination = productsQuery.data?.pagination
   const productsFound = pagination?.total_items ?? items.length
@@ -87,11 +131,13 @@ function CataloguePage() {
     setSort('')
     setPriceMinDa(0)
     setPriceMaxDa(PRICE_MAX_DA_DEFAULT)
-  }, [])
+    setBrandInSearch(null)
+  }, [setBrandInSearch])
 
   const hasActiveFilters =
     searchInput.trim() !== '' ||
     categoryId != null ||
+    brandId != null ||
     sort !== '' ||
     priceMinDa > 0 ||
     priceMaxDa < PRICE_MAX_DA_DEFAULT
@@ -114,6 +160,16 @@ function CataloguePage() {
         label: selectedCategoryName,
         onRemove: () => {
           setCategoryId(null)
+          setPage(1)
+        },
+      })
+    }
+    if (brandId != null && selectedBrandName) {
+      chips.push({
+        key: 'brand',
+        label: selectedBrandName,
+        onRemove: () => {
+          setBrandInSearch(null)
           setPage(1)
         },
       })
@@ -152,6 +208,9 @@ function CataloguePage() {
     searchInput,
     categoryId,
     selectedCategoryName,
+    brandId,
+    selectedBrandName,
+    setBrandInSearch,
     priceMinDa,
     priceMaxDa,
     sort,
@@ -239,6 +298,59 @@ function CataloguePage() {
                           {cat.product_count}
                         </span>
                       ) : null}
+                    </label>
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-headline border-(--surface-container-highest) border-b pb-2 text-sm font-bold tracking-tight">
+              Marques
+            </h3>
+            <div className="space-y-2">
+              {brandsQuery.isLoading ? (
+                <p className="text-(--on-surface-variant) text-sm">Chargement…</p>
+              ) : (
+                <>
+                  <label className="group flex cursor-pointer items-center justify-between rounded-lg py-1">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="catalogue-brand"
+                        className="border-(--outline-variant) text-primary h-4 w-4"
+                        checked={brandId == null}
+                        onChange={() => {
+                          setBrandInSearch(null)
+                          setPage(1)
+                        }}
+                      />
+                      <span className="text-(--on-surface-variant) text-sm group-hover:text-primary">
+                        Toutes les marques
+                      </span>
+                    </div>
+                  </label>
+                  {brands.map((b) => (
+                    <label
+                      key={b.id}
+                      className="group flex cursor-pointer items-center justify-between rounded-lg py-1"
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <input
+                          type="radio"
+                          name="catalogue-brand"
+                          className="border-(--outline-variant) text-primary h-4 w-4 shrink-0"
+                          checked={brandId === b.id}
+                          onChange={() => {
+                            setBrandInSearch(b.id)
+                            setPage(1)
+                          }}
+                        />
+                        <span className="text-(--on-surface-variant) truncate text-sm transition-colors group-hover:text-primary">
+                          {b.name}
+                        </span>
+                      </div>
                     </label>
                   ))}
                 </>
@@ -436,6 +548,26 @@ function CataloguePage() {
                   </select>
                 </div>
                 <div>
+                  <p className="text-(--on-surface-variant) mb-1 text-xs font-medium">Marque</p>
+                  <select
+                    value={brandId ?? ''}
+                    onChange={(e) => {
+                      const v = e.target.value
+                      setBrandInSearch(v === '' ? null : Number(v))
+                      setPage(1)
+                    }}
+                    disabled={brandsQuery.isLoading}
+                    className="bg-(--surface-container-lowest) w-full rounded-lg border-none px-3 py-2 text-sm disabled:opacity-50"
+                  >
+                    <option value="">Toutes</option>
+                    {brands.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="sm:col-span-2">
                   <p className="text-(--on-surface-variant) mb-1 text-xs font-medium">Prix min — max (DA)</p>
                   <div className="flex gap-2">
                     <input

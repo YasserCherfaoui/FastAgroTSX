@@ -135,3 +135,35 @@ textarea {
   background: var(--surface-container-highest);
   box-shadow: inset 0 -2px 0 var(--primary);
 }
+
+/* Landing page skeletons — light sweep (shimmer) */
+@keyframes landing-shimmer-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(280%);
+  }
+}
+
+.landing-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-container-highest);
+}
+
+.landing-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--on-surface) 12%, transparent) 50%,
+    transparent
+  );
+  animation: landing-shimmer-slide 1.35s ease-in-out infinite;
+}
