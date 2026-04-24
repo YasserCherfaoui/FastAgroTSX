@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#91d78a",
+                        "tertiary-fixed-dim": "#88d982",
+                        "on-error": "#ffffff",
+                        "on-background": "#1a1c19",
+                        "primary-container": "#1b5e20",
+                        "tertiary": "#00450d",
+                        "surface-tint": "#2a6b2c",
+                        "on-primary-fixed": "#002203",
+                        "on-primary-container": "#90d689",
+                        "surface-dim": "#dadad6",
+                        "on-tertiary-fixed-variant": "#005312",
+                        "tertiary-fixed": "#a3f69c",
+                        "primary-fixed": "#acf4a4",
+                        "on-secondary-fixed": "#311300",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e8e8e4",
+                        "secondary-fixed": "#ffdcc7",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#1a1c19",
+                        "background": "#fafaf5",
+                        "error": "#ba1a1a",
+                        "surface": "#fafaf5",
+                        "surface-container-highest": "#e2e3de",
+                        "inverse-on-surface": "#f1f1ec",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#ffb787",
+                        "outline-variant": "#c0c9bb",
+                        "surface-container": "#eeeee9",
+                        "on-secondary-fixed-variant": "#723600",
+                        "primary-fixed-dim": "#91d78a",
+                        "surface-bright": "#fafaf5",
+                        "primary": "#00450d",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#41493e",
+                        "surface-container-low": "#f4f4ef",
+                        "inverse-surface": "#2f312e",
+                        "on-primary": "#ffffff",
+                        "secondary": "#964900",
+                        "on-tertiary-container": "#86d881",
+                        "outline": "#717a6d",
+                        "on-secondary-container": "#612d00",
+                        "on-tertiary-fixed": "#002204",
+                        "secondary-container": "#fe851f",
+                        "tertiary-container": "#055f18",
+                        "surface-variant": "#e2e3de",
+                        "on-primary-fixed-variant": "#0c5216"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-layering { background-color: rgba(238, 238, 233, 0.5); }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<nav class="sticky top-0 w-full z-50 bg-[#FAFAF5] shadow-[0_4px_20px_-5px_rgba(0,0,0,0.06)] border-none">
+<div class="flex items-center justify-between px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-12">
+<a class="text-2xl font-black text-[#1B5E20] italic font-headline tracking-tight" href="#">Fast-Agros</a>
+<div class="hidden md:flex items-center gap-8 font-headline font-bold tracking-tight text-sm">
+<a class="text-[#1B5E20] border-b-2 border-[#1B5E20] pb-1" href="#">Catalogue</a>
+<a class="text-stone-600 hover:text-[#1B5E20] transition-colors" href="#">Categories</a>
+<a class="text-stone-600 hover:text-[#1B5E20] transition-colors" href="#">Gros</a>
+<a class="text-stone-600 hover:text-[#1B5E20] transition-colors" href="#">About</a>
+<a class="text-stone-600 hover:text-[#1B5E20] transition-colors" href="#">Contact</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-stone-600 hover:bg-stone-100 rounded-lg transition-colors">
+<span class="material-symbols-outlined">language</span>
+</button>
+<button class="px-4 py-2 text-sm font-bold text-stone-600 hover:bg-stone-100 rounded-lg active:scale-95 transition-all">Se connecter</button>
+<button class="px-6 py-2.5 bg-primary-container text-on-primary-container rounded-lg font-bold text-sm shadow-sm active:scale-95 transition-all">Commander maintenant</button>
+</div>
+</div>
+</nav>
+<main class="max-w-screen-2xl mx-auto flex gap-8 px-8 py-10">
+<!-- Sidebar Filter -->
+<aside class="hidden lg:flex flex-col w-72 shrink-0 space-y-8">
+<div class="space-y-4">
+<div class="relative">
+<input class="w-full h-11 pl-11 pr-4 bg-surface-container-lowest border-none rounded-lg focus:ring-2 focus:ring-primary text-sm shadow-sm" placeholder="Rechercher un produit..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant">search</span>
+</div>
+<button class="w-full py-2 text-xs font-bold uppercase tracking-widest text-primary text-left">Effacer les filtres</button>
+</div>
+<!-- Categories -->
+<div class="space-y-4">
+<h3 class="font-headline font-bold text-sm tracking-tight border-b border-surface-container-highest pb-2">Catégories</h3>
+<div class="space-y-3">
+<label class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-3">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4" type="checkbox"/>
+<span class="text-sm text-on-surface-variant group-hover:text-primary transition-colors">Légumes frais</span>
+</div>
+<span class="text-xs font-bold text-outline">84</span>
+</label>
+<label class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-3">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4" type="checkbox"/>
+<span class="text-sm text-on-surface-variant group-hover:text-primary transition-colors">Fruits de saison</span>
+</div>
+<span class="text-xs font-bold text-outline">56</span>
+</label>
+<label class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-3">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4" type="checkbox"/>
+<span class="text-sm text-on-surface-variant group-hover:text-primary transition-colors">Céréales &amp; Grains</span>
+</div>
+<span class="text-xs font-bold text-outline">42</span>
+</label>
+</div>
+</div>
+<!-- Packaging -->
+<div class="space-y-4">
+<h3 class="font-headline font-bold text-sm tracking-tight border-b border-surface-container-highest pb-2">Conditionnement</h3>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 bg-surface-container-highest text-on-surface text-xs font-bold rounded shadow-sm hover:bg-primary-fixed transition-colors">Sac 25kg</button>
+<button class="px-3 py-1.5 bg-primary text-on-primary text-xs font-bold rounded shadow-sm">Sac 50kg</button>
+<button class="px-3 py-1.5 bg-surface-container-highest text-on-surface text-xs font-bold rounded shadow-sm hover:bg-primary-fixed transition-colors">Carton</button>
+<button class="px-3 py-1.5 bg-surface-container-highest text-on-surface text-xs font-bold rounded shadow-sm hover:bg-primary-fixed transition-colors">Palette</button>
+</div>
+</div>
+<!-- Price Slider -->
+<div class="space-y-4">
+<h3 class="font-headline font-bold text-sm tracking-tight border-b border-surface-container-highest pb-2">Gamme de prix (DA)</h3>
+<div class="space-y-4">
+<input class="w-full h-1.5 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+<div class="flex items-center justify-between">
+<span class="text-xs font-mono font-bold px-2 py-1 bg-surface-container-low rounded">5 000 DA</span>
+<span class="text-xs font-mono font-bold px-2 py-1 bg-surface-container-low rounded">250 000 DA</span>
+</div>
+</div>
+</div>
+<!-- Toggles -->
+<div class="space-y-4 pt-4 border-t border-surface-container-highest">
+<label class="flex items-center justify-between cursor-pointer">
+<span class="text-sm font-medium text-on-surface">En stock seulement</span>
+<div class="relative inline-flex h-5 w-9 items-center rounded-full bg-primary-container">
+<span class="inline-block h-3 w-3 translate-x-5 rounded-full bg-on-primary transition-transform"></span>
+</div>
+</label>
+<label class="flex items-center justify-between cursor-pointer">
+<span class="text-sm font-medium text-on-surface">Algérie / Import</span>
+<div class="relative inline-flex h-5 w-9 items-center rounded-full bg-surface-container-highest">
+<span class="inline-block h-3 w-3 translate-x-1 rounded-full bg-white transition-transform"></span>
+</div>
+</label>
+</div>
+</aside>
+<!-- Main Content -->
+<div class="flex-1 space-y-8">
+<!-- Context Header -->
+<div class="space-y-6">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<nav class="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-outline">
+<a class="hover:text-primary transition-colors" href="#">Accueil</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-primary">Catalogue</span>
+</nav>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 bg-surface-container-low p-1 rounded-lg">
+<button class="p-1.5 bg-surface-container-lowest shadow-sm rounded-md text-primary">
+<span class="material-symbols-outlined text-sm">grid_view</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:bg-surface-container-highest rounded-md">
+<span class="material-symbols-outlined text-sm">list</span>
+</button>
+</div>
+<div class="relative">
+<select class="appearance-none bg-surface-container-lowest border-none pl-4 pr-10 py-2 text-sm font-bold rounded-lg shadow-sm focus:ring-2 focus:ring-primary outline-none">
+<option>Prix croissant</option>
+<option>Prix décroissant</option>
+<option>Plus récents</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2 text-sm pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<h1 class="font-headline text-3xl font-extrabold tracking-tight text-primary">
+                        248 <span class="font-normal text-on-surface-variant text-lg">produits trouvés</span>
+</h1>
+<div class="flex gap-2">
+<span class="flex items-center gap-1.5 px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant text-xs font-bold rounded">
+                            Sac 50kg
+                            <span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</span>
+<span class="flex items-center gap-1.5 px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant text-xs font-bold rounded">
+                            Légumes
+                            <span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Products Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="group bg-surface-container-lowest overflow-hidden rounded-xl transition-all duration-300 hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)]">
+<div class="relative h-56 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="close-up of industrial size sacks of high-quality premium white potatoes in a bright sunlit warehouse setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOS0mJEhO57c0M1w2HmcC-WDTuUL82X2_AaPM7s-2fbS1Hzh0nNFbb9koGrV885mys8GWGMxRkPZ1VhyQxzXbQYJC5XP9uqHZG4Wag5Es2-4LAG1dfB3glKForgwvPNKdVpc9TosUdrLWxb_z_u_ov2cl9czLvEg8fKJ0w185Z7AdbFQCf6OkbPGIPI8pPquo5JJL1VH6SQaIPZls06wHM8gjIKss5XpnbNc6s0ib10TXrUCGSTguO2GNmIaZ_O8ih_O3lTZ0nZ3k"/>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="px-3 py-1 bg-primary text-on-primary text-[10px] font-bold uppercase tracking-widest rounded-sm">Algeria Origin</span>
+<span class="px-3 py-1 bg-secondary text-on-secondary text-[10px] font-bold uppercase tracking-widest rounded-sm">Premium</span>
+</div>
+</div>
+<div class="p-6 space-y-6">
+<div>
+<p class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Légumes frais</p>
+<h3 class="font-headline text-xl font-bold text-on-surface">Pomme de Terre Spunta G1</h3>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
+<span class="text-xs font-medium text-on-surface-variant">1 Palette (1.2t)</span>
+<span class="font-headline font-extrabold text-primary">45 000 DA</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-primary-container text-on-primary-container rounded-lg">
+<span class="text-xs font-medium opacity-90">5 Palettes+</span>
+<span class="font-headline font-extrabold">42 000 DA</span>
+</div>
+</div>
+<div class="flex items-center gap-3 text-xs text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>24 palettes dispos</span>
+</div>
+<span class="text-outline-variant">|</span>
+<span>Expédition 24/48h</span>
+</div>
+<button class="w-full py-3 bg-on-surface text-surface text-sm font-bold rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">request_quote</span>
+                            Ajouter au devis
+                        </button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-surface-container-lowest overflow-hidden rounded-xl transition-all duration-300 hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)]">
+<div class="relative h-56 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="vibrant rows of fresh carrots bundled in bulk with deep green tops in an industrial agricultural distribution center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPPLVUvoE-3Qlk00QAzuHummw_Pe1-2CfdBi97YSpW4c50rvP_lqhFnK-ORl2daCJdEh7BkV8LgD5o4dz9SvU6MQeARzIYYQrOVfaEVzqX5k9onKhHrVEXr2xumhSeGnNj8aRlgsoyHbeofeyplKgt3H78AMJXtthgOv32bDGfxCyQDBXuGKr_LL4cu7lot3OXSTCoAnwbi_duASpLCFfugwx9MoOCeFodoKjARpxKhJUe1VWB0BzJx6gOYATNpW-puX_S5LsUi5I"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 bg-primary text-on-primary text-[10px] font-bold uppercase tracking-widest rounded-sm">Algeria Origin</span>
+</div>
+</div>
+<div class="p-6 space-y-6">
+<div>
+<p class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Légumes frais</p>
+<h3 class="font-headline text-xl font-bold text-on-surface">Carottes Nantaise Jumbo</h3>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
+<span class="text-xs font-medium text-on-surface-variant">1 Carton (25kg)</span>
+<span class="font-headline font-extrabold text-primary">3 200 DA</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
+<span class="text-xs font-medium text-on-surface-variant">1 Palette (40c)</span>
+<span class="font-headline font-extrabold text-primary">2 900 DA</span>
+</div>
+</div>
+<div class="flex items-center gap-3 text-xs text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Stock limité</span>
+</div>
+<span class="text-outline-variant">|</span>
+<span>Local: Biskra</span>
+</div>
+<button class="w-full py-3 bg-on-surface text-surface text-sm font-bold rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">request_quote</span>
+                            Ajouter au devis
+                        </button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-surface-container-lowest overflow-hidden rounded-xl transition-all duration-300 hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)]">
+<div class="relative h-56 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="professional flat lay of high-grade dried chickpeas in a commercial export container with sharp industrial lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlgUoM6EPJbDCXvhjIYwescHqE0IHHnT60c-t4G_zYxrQU3WxHr0X-IH344YUYub0Zodd3hkppNKDJn3LxoF6PNM2X-eO_FQF2BCWmQ9g3BcN7ng1ODFdkpxvjCBJBGWSs8hb3AR1PGvM9Dm5blNMJTEKtSTaBIAI9ThX1CEju6LGXukkw6pDfS8vIQ93rqcHDtj7IQC2jGbSSQx9wBG9aXnyv-6a3qQhO155-nTeMNgGW0tTkM9IbgJ-G8jjO0hOnVYJvSSkV7Tk"/>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 bg-on-surface text-surface text-[10px] font-bold uppercase tracking-widest rounded-sm">Imported</span>
+</div>
+</div>
+<div class="p-6 space-y-6">
+<div>
+<p class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Céréales &amp; Grains</p>
+<h3 class="font-headline text-xl font-bold text-on-surface">Pois Chiches Import 12mm</h3>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
+<span class="text-xs font-medium text-on-surface-variant">Sac 50kg</span>
+<span class="font-headline font-extrabold text-primary">12 500 DA</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
+<span class="text-xs font-medium text-on-surface-variant">100+ Sacs</span>
+<span class="font-headline font-extrabold text-primary">11 800 DA</span>
+</div>
+</div>
+<div class="flex items-center gap-3 text-xs text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>Disponible</span>
+</div>
+<span class="text-outline-variant">|</span>
+<span>Origine: Canada</span>
+</div>
+<button class="w-full py-3 bg-on-surface text-surface text-sm font-bold rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">request_quote</span>
+                            Ajouter au devis
+                        </button>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-center pt-12">
+<nav class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high transition-colors text-outline">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-on-primary font-bold text-sm">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high font-bold text-sm text-on-surface-variant">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high font-bold text-sm text-on-surface-variant">3</button>
+<span class="px-2 text-outline">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high font-bold text-sm text-on-surface-variant">12</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-surface-container-high transition-colors text-on-surface">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</nav>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-stone-100 dark:bg-stone-950 w-full py-16 px-8 border-t-0">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 max-w-screen-2xl mx-auto">
+<div class="space-y-6">
+<div class="font-headline font-extrabold text-[#1B5E20] text-2xl italic">Fast-Agros</div>
+<p class="text-xs uppercase tracking-widest text-stone-500 leading-relaxed">
+                    © 2024 Fast-Agros. Industrial Freshness. Global standards in wholesale agriculture supply chains.
+                </p>
+</div>
+<div>
+<h4 class="font-headline font-bold text-sm mb-6 text-primary tracking-widest uppercase">Navigation</h4>
+<ul class="space-y-3 font-label text-xs uppercase tracking-widest">
+<li><a class="text-[#1B5E20]" href="#">Catalogue</a></li>
+<li><a class="text-stone-500 hover:text-stone-800" href="#">Gros &amp; Export</a></li>
+<li><a class="text-stone-500 hover:text-stone-800" href="#">About Us</a></li>
+<li><a class="text-stone-500 hover:text-stone-800" href="#">Logistics</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline font-bold text-sm mb-6 text-primary tracking-widest uppercase">Legal</h4>
+<ul class="space-y-3 font-label text-xs uppercase tracking-widest">
+<li><a class="text-stone-500 hover:text-stone-800" href="#">CGV</a></li>
+<li><a class="text-stone-500 hover:text-stone-800" href="#">Mentions Légales</a></li>
+<li><a class="text-stone-500 hover:text-stone-800" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline font-bold text-sm mb-6 text-primary tracking-widest uppercase">Contact</h4>
+<ul class="space-y-3 font-label text-xs uppercase tracking-widest">
+<li><a class="text-stone-500 hover:text-stone-800" href="#">Contact Sales</a></li>
+<li><a class="text-stone-500 hover:text-stone-800" href="#">Algiers Office</a></li>
+<li><a class="text-stone-500 hover:text-stone-800" href="#">Support 24/7</a></li>
+</ul>
+</div>
+</div>
+</footer>
+</body></html>
