@@ -2,6 +2,7 @@ import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/reac
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import AuthSync from '../components/AuthSync'
+import FloatingWhatsAppButton from '../components/FloatingWhatsAppButton'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 import GoogleAnalyticsPageView from '../components/GoogleAnalyticsPageView'
@@ -79,6 +80,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <Header />
           {children}
           <Footer />
+          <FloatingWhatsAppButton />
         </CartProvider>
         {metaPixelNoscript ? (
           <noscript>
