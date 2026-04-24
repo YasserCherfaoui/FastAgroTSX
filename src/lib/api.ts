@@ -1,5 +1,9 @@
 import type { AuthUser } from './auth-session'
 import { getAuthToken } from './auth-session'
+import type {
+  BrandListResponse,
+  CarouselsListResponse,
+} from '../models/catalogue-landing'
 import type { CategoryListResponse, Product, ProductListResponse } from '../models/product'
 
 const DEFAULT_API = 'http://localhost:8180'
@@ -189,6 +193,28 @@ export async function fetchCatalogueCategories(params?: {
   return res.json() as Promise<CategoryListResponse>
 }
 
+/** Public marketing carousel (active slides with images only). */
+export async function fetchCatalogueCarousels(): Promise<CarouselsListResponse> {
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/catalogue/carousels`)
+  if (!res.ok) throw new Error(await readApiError(res))
+  return res.json() as Promise<CarouselsListResponse>
+}
+
+export async function fetchCatalogueBrands(params?: {
+  page?: number
+  perPage?: number
+}): Promise<BrandListResponse> {
+  const page = params?.page ?? 1
+  const perPage = params?.perPage ?? 100
+  const searchParams = new URLSearchParams({
+    page: String(page),
+    per_page: String(perPage),
+  })
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/catalogue/brands?${searchParams}`)
+  if (!res.ok) throw new Error(await readApiError(res))
+  return res.json() as Promise<BrandListResponse>
+}
+
 /** Unauthenticated list used by the public catalogue page. */
 export async function fetchCatalogueProducts(params?: {
   page?: number
@@ -196,6 +222,7 @@ export async function fetchCatalogueProducts(params?: {
   /** Trims whitespace; omitted when empty. */
   q?: string
   categoryId?: number | null
+  brandId?: number | null
   sort?: 'price_asc' | 'price_desc' | 'recent' | '' | string
   minPriceCents?: number | null
   maxPriceCents?: number | null
@@ -212,6 +239,9 @@ export async function fetchCatalogueProducts(params?: {
   if (q) searchParams.set('q', q)
   if (params?.categoryId != null && params.categoryId > 0) {
     searchParams.set('category_id', String(params.categoryId))
+  }
+  if (params?.brandId != null && params.brandId > 0) {
+    searchParams.set('brand_id', String(params.brandId))
   }
   const sort = params?.sort?.trim()
   if (sort) searchParams.set('sort', sort)

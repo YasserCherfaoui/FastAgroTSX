@@ -1,6 +1,20 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { fetchCatalogueCategories, fetchCatalogueProducts } from '../lib/api'
+import HorizontalSlider, {
+  HorizontalSliderItem,
+} from '../components/HorizontalSlider'
+import {
+  BrandsSectionSkeleton,
+  CarouselSectionSkeleton,
+  CategoriesSectionSkeleton,
+} from '../components/LandingSkeletons'
+import LandingCarousel from '../components/LandingCarousel'
+import {
+  fetchCatalogueBrands,
+  fetchCatalogueCarousels,
+  fetchCatalogueCategories,
+  fetchCatalogueProducts,
+} from '../lib/api'
 import type { Category, Product } from '../models/product'
 import { formatDa } from '../models/product'
 
@@ -114,6 +128,16 @@ function LandingBestSellerCard({ product: p }: { product: Product }) {
 }
 
 function App() {
+  const carouselsQuery = useQuery({
+    queryKey: ['catalogue', 'carousels'],
+    queryFn: () => fetchCatalogueCarousels(),
+  })
+
+  const brandsQuery = useQuery({
+    queryKey: ['catalogue', 'brands', { page: 1, perPage: 50 }],
+    queryFn: () => fetchCatalogueBrands({ page: 1, perPage: 50 }),
+  })
+
   const categoriesQuery = useQuery({
     queryKey: ['catalogue', 'categories', { page: 1, perPage: 100 }],
     queryFn: () => fetchCatalogueCategories({ page: 1, perPage: 100 }),
@@ -135,77 +159,75 @@ function App() {
     'Livraison sous 48h',
   ]
 
+  const displayBrands = brandsQuery.data?.items ?? []
+
   return (
     <main className="overflow-hidden">
-      <section className="relative mx-auto grid min-h-[760px] w-full max-w-[1360px] items-center gap-14 px-6 py-16 lg:grid-cols-2 lg:px-8">
-        <div className="space-y-8">
-          <span className="inline-flex rounded-md bg-[color:color-mix(in_oklab,var(--primary-container)_12%,transparent)] px-4 py-1.5 text-xs font-bold tracking-[0.18em] text-[var(--primary)] uppercase">
-            Grossiste & Détaillant
-          </span>
-          <h1 className="max-w-3xl text-5xl leading-[1.08] font-black tracking-[-0.03em] text-[var(--on-background)] md:text-7xl">
-            Approvisionnez votre commerce{' '}
-            <span className="text-[var(--primary)]">avec excellence.</span>
-          </h1>
-          <p className="max-w-xl text-lg leading-relaxed text-[var(--on-surface-variant)]">
-            Directement du producteur à votre entrepôt. Profitez de tarifs
-            industriels sur une gamme complète de produits agroalimentaires
-            frais et secs.
-          </p>
-          <div className="flex flex-wrap gap-4 pt-2">
-            <a
-              href="#catalogue"
-              className="rounded-lg bg-[var(--secondary-container)] px-8 py-4 text-base font-extrabold text-[var(--on-secondary-container)] no-underline transition duration-200 hover:-translate-y-0.5"
-            >
-              Voir le Catalogue
-            </a>
-            <button
-              type="button"
-              className="rounded-lg bg-[var(--surface-container-lowest)] px-8 py-4 text-base font-extrabold text-[var(--primary)] transition duration-200 hover:bg-[var(--surface-container-highest)]"
-            >
-              Demander un Devis
-            </button>
-          </div>
-          <div className="flex flex-wrap items-center gap-8 pt-4 text-xs font-bold tracking-[0.14em] text-[var(--on-surface-variant)] uppercase">
-            <span>ISO 22000</span>
-            <span>Qualité Supérieure</span>
-          </div>
-        </div>
+      {carouselsQuery.isLoading ? (
+        <CarouselSectionSkeleton />
+      ) : (
+        <LandingCarousel
+          items={carouselsQuery.isError ? [] : (carouselsQuery.data?.items ?? [])}
+        />
+      )}
 
-        <div className="relative">
-          <div className="absolute -inset-4 -z-10 rounded-[2.5rem] bg-[color:color-mix(in_oklab,var(--primary-container)_10%,transparent)]" />
-          <div className="hero-image h-[600px] rounded-[2rem]">
-            <img
-              alt="Bulk food products warehouse"
-              className="h-full w-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjF0u4NLdSZ77RRVD2_CIANPyFT4u2OlLkkp2eNrDWTWOMV-gHeS7LOrjapRhJFAQ3Smou5sH0jIII9fzCWOHHHxFHBtHMiv8LiDmwicd_odiRcBIm8FNwQ08rgk7K_G0RLar9hMWNNiT9qAWUBBDnyEyZfo0A8BIkUOGYIKcvx-zJxvCwBRBQX-Ayxj6XN0c-i4t3L_ePG4orUp5PwWVsREVIXLkhQkFvYgoHC-qMTyHIkVbnDFA9mev4pjziuv5KldmKFcLx5Aw"
-            />
-          </div>
-          <div className="absolute -bottom-6 -left-6 max-w-xs rounded-2xl bg-[var(--surface-container-lowest)] p-6 shadow-[0_20px_32px_rgba(26,28,25,0.12)]">
-            <p className="m-0 text-3xl font-black text-[var(--primary)]">98%</p>
-            <p className="m-0 mt-2 text-xs font-semibold tracking-[0.08em] text-[var(--on-surface-variant)] uppercase">
-              Taux de satisfaction logistique
+      <section
+        id="brands"
+        className="border-b border-[color:color-mix(in_oklab,var(--outline-variant)_50%,transparent)] bg-[var(--surface-container-lowest)] px-6 py-16 sm:px-8"
+        aria-label="Nos marques"
+      >
+        <div className="mx-auto w-full max-w-[1360px]">
+          <div className="mb-10">
+            <h2 className="m-0 text-3xl font-black tracking-tight text-[var(--on-surface)] uppercase sm:text-4xl">
+              Marques
+            </h2>
+            <p className="m-0 mt-3 max-w-lg text-[var(--on-surface-variant)]">
+              Des partenaires reconnus pour approvisionner votre activité.
             </p>
           </div>
-        </div>
-      </section>
-
-      <section className="bg-[var(--primary-container)] py-16 text-[var(--on-primary)]">
-        <div className="mx-auto grid w-full max-w-[1360px] grid-cols-2 gap-10 px-6 md:grid-cols-4 md:px-8">
-          {[
-            ['500+', 'Produits'],
-            ['15', 'Wilayas'],
-            ['2000+', 'Clients'],
-            ['2010', 'Depuis'],
-          ].map(([value, label]) => (
-            <div key={label} className="pl-6">
-              <p className="m-0 text-5xl leading-none font-black tracking-[-0.03em] text-[var(--primary-fixed)]">
-                {value}
-              </p>
-              <p className="m-0 mt-3 text-xs font-medium tracking-[0.16em] text-[color:color-mix(in_oklab,var(--on-primary)_80%,transparent)] uppercase">
-                {label}
-              </p>
-            </div>
-          ))}
+          {brandsQuery.isLoading && <BrandsSectionSkeleton />}
+          {brandsQuery.isError && (
+            <p className="m-0 text-[var(--on-surface-variant)]">
+              Impossible de charger les marques pour le moment.
+            </p>
+          )}
+          {!brandsQuery.isLoading && !brandsQuery.isError && displayBrands.length === 0 && (
+            <p className="m-0 text-[var(--on-surface-variant)]">Aucune marque pour le moment.</p>
+          )}
+          {displayBrands.length > 0 && (
+            <HorizontalSlider
+              className="px-1 sm:px-10"
+              aria-label="Carrousel des marques"
+            >
+              {displayBrands.map((b) => {
+                const img = b.brand_image?.trim()
+                return (
+                  <HorizontalSliderItem
+                    key={b.id}
+                    className="w-[8.75rem] sm:w-40"
+                  >
+                    <Link
+                      to="/catalogue"
+                      search={{ brandId: b.id }}
+                      className="flex h-20 w-full items-center justify-center rounded-xl border border-[color:color-mix(in_oklab,var(--outline)_25%,transparent)] bg-[var(--surface-container-low)] px-3 py-2 no-underline transition duration-200 hover:border-[var(--primary)] sm:h-24"
+                    >
+                      {img ? (
+                        <img
+                          src={img}
+                          alt={b.name}
+                          className="max-h-14 w-full object-contain sm:max-h-16"
+                        />
+                      ) : (
+                        <span className="text-center text-sm font-bold text-[var(--on-surface)]">
+                          {b.name}
+                        </span>
+                      )}
+                    </Link>
+                  </HorizontalSliderItem>
+                )
+              })}
+            </HorizontalSlider>
+          )}
         </div>
       </section>
 
@@ -222,51 +244,58 @@ function App() {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {categoriesQuery.isLoading && (
-              <p className="col-span-full text-[var(--on-surface-variant)]">
-                Chargement des catégories…
-              </p>
-            )}
+          <div className="space-y-4">
+            {categoriesQuery.isLoading && <CategoriesSectionSkeleton />}
             {categoriesQuery.isError && (
-              <p className="col-span-full text-[var(--on-surface-variant)]">
+              <p className="m-0 text-[var(--on-surface-variant)]">
                 Impossible de charger les catégories pour le moment.
               </p>
             )}
             {!categoriesQuery.isLoading &&
               !categoriesQuery.isError &&
               categories.length === 0 && (
-                <p className="col-span-full text-[var(--on-surface-variant)]">
+                <p className="text-[var(--on-surface-variant)]">
                   Aucune catégorie disponible.
                 </p>
               )}
-            {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                to="/catalogue"
-                className="group block rounded-xl bg-[var(--surface-container-lowest)] p-8 no-underline transition duration-200 hover:bg-[var(--primary)] hover:text-[var(--on-primary)]"
+            {categories.length > 0 && (
+              <HorizontalSlider
+                className="px-1 sm:px-10"
+                aria-label="Carrousel des catégories"
               >
-                <article className="flex items-start gap-5">
-                  <CategoryAvatar category={cat} />
-                  <div className="min-w-0 flex-1">
-                    <p className="m-0 text-xl font-black text-[var(--on-surface)] group-hover:text-[var(--on-primary)]">
-                      {cat.name}
-                    </p>
-                    <p className="m-0 mt-3 text-sm text-[var(--on-surface-variant)] group-hover:text-[color:color-mix(in_oklab,var(--on-primary)_78%,transparent)]">
-                      {formatCategoryProductSubtitle(cat.product_count)}
-                    </p>
-                  </div>
-                </article>
-              </Link>
-            ))}
+                {categories.map((cat) => (
+                  <HorizontalSliderItem
+                    key={cat.id}
+                    className="w-[min(20rem,85vw)] sm:w-96"
+                  >
+                    <Link
+                      to="/catalogue"
+                      className="group block h-full rounded-xl bg-[var(--surface-container-lowest)] p-6 no-underline transition duration-200 hover:bg-[var(--primary)] hover:text-[var(--on-primary)] sm:p-8"
+                    >
+                      <article className="flex items-start gap-4 sm:gap-5">
+                        <CategoryAvatar category={cat} />
+                        <div className="min-w-0 flex-1">
+                          <p className="m-0 text-lg font-black text-[var(--on-surface)] group-hover:text-[var(--on-primary)] sm:text-xl">
+                            {cat.name}
+                          </p>
+                          <p className="m-0 mt-2 text-sm text-[var(--on-surface-variant)] group-hover:text-[color:color-mix(in_oklab,var(--on-primary)_78%,transparent)] sm:mt-3">
+                            {formatCategoryProductSubtitle(cat.product_count)}
+                          </p>
+                        </div>
+                      </article>
+                    </Link>
+                  </HorizontalSliderItem>
+                ))}
+              </HorizontalSlider>
+            )}
           </div>
         </div>
       </section>
 
-      <section id="catalogue" className="px-6 py-24 sm:px-8">
+      <section id="top-ventes" className="px-6 py-24 sm:px-8">
         <div className="mx-auto w-full max-w-[1360px]">
           <h2 className="mb-16 text-center text-4xl font-black tracking-tight text-[var(--on-surface)] uppercase">
-            Produits les plus commandés
+            Top ventes
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             {bestSellersQuery.isLoading && (
@@ -290,6 +319,26 @@ function App() {
               <LandingBestSellerCard key={p.id} product={p} />
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="bg-[var(--primary-container)] py-16 text-[var(--on-primary)]">
+        <div className="mx-auto grid w-full max-w-[1360px] grid-cols-2 gap-10 px-6 md:grid-cols-4 md:px-8">
+          {[
+            ['500+', 'Produits'],
+            ['15', 'Wilayas'],
+            ['2000+', 'Clients'],
+            ['2010', 'Depuis'],
+          ].map(([value, label]) => (
+            <div key={label} className="pl-6">
+              <p className="m-0 text-5xl leading-none font-black tracking-[-0.03em] text-[var(--primary-fixed)]">
+                {value}
+              </p>
+              <p className="m-0 mt-3 text-xs font-medium tracking-[0.16em] text-[color:color-mix(in_oklab,var(--on-primary)_80%,transparent)] uppercase">
+                {label}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
