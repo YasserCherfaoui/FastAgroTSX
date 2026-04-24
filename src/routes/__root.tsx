@@ -4,7 +4,9 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import AuthSync from '../components/AuthSync'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
+import GoogleAnalyticsPageView from '../components/GoogleAnalyticsPageView'
 import MetaPixelPageView from '../components/MetaPixelPageView'
+import { getGtagInitScript, getGtagJsSrc } from '../lib/google-analytics'
 import {
   getMetaPixelBootstrapScript,
   getMetaPixelNoscriptUrl,
@@ -53,6 +55,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const gtagJsSrc = getGtagJsSrc()
+  const gtagInit = getGtagInitScript()
   const metaPixelBootstrap = getMetaPixelBootstrapScript()
   const metaPixelNoscript = getMetaPixelNoscriptUrl()
 
@@ -61,6 +65,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
+        {gtagJsSrc ? <script async={true} src={gtagJsSrc} /> : null}
+        {gtagInit ? <script dangerouslySetInnerHTML={{ __html: gtagInit }} /> : null}
         {metaPixelBootstrap ? (
           <script dangerouslySetInnerHTML={{ __html: metaPixelBootstrap }} />
         ) : null}
@@ -68,6 +74,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className="font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
         <CartProvider>
           <MetaPixelPageView />
+          <GoogleAnalyticsPageView />
           <AuthSync />
           <Header />
           {children}
