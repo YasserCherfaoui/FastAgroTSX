@@ -28,8 +28,6 @@ export const Route = createFileRoute('/products/$productId')({
 const PRODUCT_IMAGE_FALLBACK =
   'https://placehold.co/1200x900/e8e8e0/1B5E20?text=Fast-Agros'
 
-type DetailTab = 'description' | 'composition' | 'conservation'
-
 function centsToDa(cents: number): number {
   return Math.round(cents / 100)
 }
@@ -58,7 +56,6 @@ function ProductDetailsPage() {
   const isValidProductId = Number.isFinite(numericProductId) && numericProductId > 0
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  const [selectedTab, setSelectedTab] = useState<DetailTab>('description')
   const [quantity, setQuantity] = useState(1)
   const [justAdded, setJustAdded] = useState(false)
 
@@ -71,7 +68,6 @@ function ProductDetailsPage() {
 
   useEffect(() => {
     setSelectedImageIndex(0)
-    setSelectedTab('description')
     setQuantity(1)
   }, [product?.id])
 
@@ -122,7 +118,7 @@ function ProductDetailsPage() {
         ? [
             {
               id: product.id,
-              label: 'Prix',
+              label: 'Total estime',
               min_quantity: 1,
               price_cents: product.price_cents,
               is_highlighted: true,
@@ -144,16 +140,6 @@ function ProductDetailsPage() {
 
   const totalEstimateDa = activeTier ? centsToDa(activeTier.price_cents) * quantity : 0
   const productCard = product ? productToCatalogueCard(product) : null
-
-  const compositionSpecs = useMemo(
-    () => (product?.specifications ?? []).filter((spec) => isCompositionKey(spec.spec_key)),
-    [product?.specifications],
-  )
-
-  const storageSpecs = useMemo(
-    () => (product?.specifications ?? []).filter((spec) => isStorageKey(spec.spec_key)),
-    [product?.specifications],
-  )
 
   const extraSpecs = useMemo(
     () =>
@@ -269,6 +255,54 @@ function ProductDetailsPage() {
                   {product.name}
                 </h1>
               </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="product-detail-quantity-mobile"
+                    className="text-(--on-surface-variant) text-xs font-bold tracking-[0.14em] uppercase"
+                  >
+                    Quantite
+                  </label>
+                  <div className="bg-(--surface-container-lowest) flex h-12 items-center overflow-hidden rounded-xl">
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((value) => Math.max(1, value - 1))}
+                      className="hover:bg-(--surface-container-highest) h-full px-4 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-sm">remove</span>
+                    </button>
+                    <input
+                      id="product-detail-quantity-mobile"
+                      type="number"
+                      min={1}
+                      value={quantity}
+                      onChange={(e) =>
+                        setQuantity(Math.max(1, Number.parseInt(e.target.value || '1', 10) || 1))
+                      }
+                      className="w-full border-none bg-transparent text-center text-sm font-bold outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((value) => value + 1)}
+                      className="hover:bg-(--surface-container-highest) h-full px-4 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-sm">add</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-(--surface-container-low) rounded-[1.25rem] px-4 py-4">
+                  <p className="text-(--on-surface-variant) m-0 text-[11px] font-bold tracking-[0.14em] uppercase">
+                    Total estime
+                  </p>
+                  <p className="m-0 mt-2 text-sm font-bold text-(--on-surface)">
+                    {activeTier?.label ?? 'Prix standard'} x {quantity} unite(s)
+                  </p>
+                  <p className="text-primary font-headline m-0 mt-2 text-2xl font-black">
+                    {formatDa(totalEstimateDa)}
+                  </p>
+                </div>
+              </div>
               <button
                 type="button"
                 onClick={handleAddToCart}
@@ -303,89 +337,26 @@ function ProductDetailsPage() {
             ) : null}
 
             <section className="pt-10">
-              <div className="border-(--outline-variant) mb-8 flex flex-wrap gap-2 border-b">
-                {[
-                  ['description', 'Description'],
-                  ['composition', 'Composition'],
-                  ['conservation', 'Conservation'],
-                ].map(([value, label]) => (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setSelectedTab(value as DetailTab)}
-                    className={`px-5 py-4 text-sm font-bold transition ${
-                      selectedTab === value
-                        ? 'text-primary border-primary border-b-2'
-                        : 'text-(--on-surface-variant) hover:text-primary'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+              <div className="space-y-5 text-sm leading-7 text-(--on-surface-variant)">
+                <p>{product.description}</p>
+                {extraSpecs.length > 0 ? (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {extraSpecs.map((spec) => (
+                      <div
+                        key={spec.id}
+                        className="bg-(--surface-container-low) rounded-xl px-4 py-3"
+                      >
+                        <p className="m-0 text-[11px] font-bold tracking-[0.14em] uppercase">
+                          {spec.spec_key}
+                        </p>
+                        <p className="m-0 mt-2 text-sm text-(--on-surface)">
+                          {spec.spec_value}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </div>
-
-              {selectedTab === 'description' ? (
-                <div className="space-y-5 text-sm leading-7 text-(--on-surface-variant)">
-                  <p>{product.description}</p>
-                  {extraSpecs.length > 0 ? (
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {extraSpecs.map((spec) => (
-                        <div
-                          key={spec.id}
-                          className="bg-(--surface-container-low) rounded-xl px-4 py-3"
-                        >
-                          <p className="m-0 text-[11px] font-bold tracking-[0.14em] uppercase">
-                            {spec.spec_key}
-                          </p>
-                          <p className="m-0 mt-2 text-sm text-(--on-surface)">
-                            {spec.spec_value}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-              ) : null}
-
-              {selectedTab === 'composition' ? (
-                <div className="space-y-3 text-sm text-(--on-surface-variant)">
-                  {compositionSpecs.length > 0 ? (
-                    compositionSpecs.map((spec) => (
-                      <div
-                        key={spec.id}
-                        className="bg-(--surface-container-low) rounded-xl px-4 py-4"
-                      >
-                        <p className="m-0 text-[11px] font-bold tracking-[0.14em] uppercase">
-                          {spec.spec_key}
-                        </p>
-                        <p className="m-0 mt-2 text-sm text-(--on-surface)">{spec.spec_value}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p>Aucune composition detaillee n&apos;est disponible pour ce produit.</p>
-                  )}
-                </div>
-              ) : null}
-
-              {selectedTab === 'conservation' ? (
-                <div className="space-y-3 text-sm text-(--on-surface-variant)">
-                  {storageSpecs.length > 0 ? (
-                    storageSpecs.map((spec) => (
-                      <div
-                        key={spec.id}
-                        className="bg-(--surface-container-low) rounded-xl px-4 py-4"
-                      >
-                        <p className="m-0 text-[11px] font-bold tracking-[0.14em] uppercase">
-                          {spec.spec_key}
-                        </p>
-                        <p className="m-0 mt-2 text-sm text-(--on-surface)">{spec.spec_value}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p>Les consignes de conservation seront communiquees a la commande.</p>
-                  )}
-                </div>
-              ) : null}
             </section>
           </section>
 
@@ -461,7 +432,7 @@ function ProductDetailsPage() {
             </section>
 
             <section className="space-y-6">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="hidden gap-4 sm:grid-cols-2 lg:grid">
                 <div className="space-y-2">
                   <label
                     htmlFor="product-detail-quantity"
@@ -499,27 +470,15 @@ function ProductDetailsPage() {
 
                 <div className="bg-(--surface-container-low) rounded-[1.25rem] px-4 py-4">
                   <p className="text-(--on-surface-variant) m-0 text-[11px] font-bold tracking-[0.14em] uppercase">
-                    Palier actif
-                  </p>
-                  <p className="m-0 mt-2 text-sm font-bold text-(--on-surface)">
-                    {activeTier?.label ?? 'Prix standard'}
-                  </p>
-                  <p className="text-primary font-headline m-0 mt-2 text-2xl font-black">
-                    {activeTier ? formatDa(centsToDa(activeTier.price_cents)) : '-'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-(--surface-container-low) flex items-end justify-between rounded-3xl px-5 py-5">
-                <div>
-                  <p className="text-(--on-surface-variant) m-0 text-xs font-medium">
                     Total estime
                   </p>
-                  <p className="font-headline m-0 mt-2 text-3xl font-black text-(--on-surface)">
+                  <p className="m-0 mt-2 text-sm font-bold text-(--on-surface)">
+                    {activeTier?.label ?? 'Prix standard'} x {quantity} unite(s)
+                  </p>
+                  <p className="text-primary font-headline m-0 mt-2 text-2xl font-black">
                     {formatDa(totalEstimateDa)}
                   </p>
                 </div>
-                <p className="text-(--outline) m-0 text-[11px]">Hors taxes et livraison</p>
               </div>
 
               <div className="space-y-3">

@@ -74,7 +74,7 @@ export default function Footer() {
             <li>Alger, Algérie</li>
             <li>contact@fast-agros.dz</li>
             <li className="text-(--on-surface) font-bold">
-              +213 (0) 550 00 00 00
+              +213 (0) 542 60 83 97
             </li>
           </ul>
         </div>
