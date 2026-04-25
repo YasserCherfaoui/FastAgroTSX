@@ -85,11 +85,17 @@ function LandingBestSellerCard({ product: p }: { product: Product }) {
 
   return (
     <article className="rounded-2xl bg-[var(--surface-container-lowest)] p-6 shadow-[0_10px_18px_rgba(26,28,25,0.08)]">
-      <img
-        src={imageUrl}
-        alt={p.name}
-        className="h-48 w-full rounded-xl object-cover"
-      />
+      <Link
+        to="/products/$productId"
+        params={{ productId: String(p.id) }}
+        className="block no-underline"
+      >
+        <img
+          src={imageUrl}
+          alt={p.name}
+          className="h-48 w-full rounded-xl object-cover"
+        />
+      </Link>
       <p className="mt-5 mb-1 text-xs font-bold tracking-[0.12em] text-[var(--on-surface-variant)] uppercase">
         {p.category?.name ?? 'Catalogue'}
       </p>

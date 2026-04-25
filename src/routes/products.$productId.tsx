@@ -260,6 +260,25 @@ function ProductDetailsPage() {
               </div>
             </div>
 
+            <section className="space-y-4 lg:hidden">
+              <div>
+                <p className="text-secondary m-0 mb-3 text-[11px] font-bold tracking-[0.2em] uppercase">
+                  {product.category?.name ?? 'Catalogue'}
+                </p>
+                <h1 className="font-headline m-0 text-3xl leading-tight font-black tracking-[-0.03em] text-(--on-surface)">
+                  {product.name}
+                </h1>
+              </div>
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                className="bg-(--secondary-container) text-(--on-secondary-container) flex h-14 w-full items-center justify-center gap-2 rounded-xl text-sm font-extrabold transition-transform hover:-translate-y-0.5"
+              >
+                <span className="material-symbols-outlined">shopping_cart</span>
+                Ajouter au panier
+              </button>
+            </section>
+
             {images.length > 1 ? (
               <div className="grid grid-cols-4 gap-4">
                 {images.map((imageUrl, index) => (
@@ -371,7 +390,7 @@ function ProductDetailsPage() {
           </section>
 
           <aside className="space-y-8 lg:col-span-5">
-            <div>
+            <div className="hidden lg:block">
               <p className="text-secondary m-0 mb-3 text-[11px] font-bold tracking-[0.2em] uppercase">
                 {product.category?.name ?? 'Catalogue'}
               </p>
@@ -507,7 +526,7 @@ function ProductDetailsPage() {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="bg-(--secondary-container) text-(--on-secondary-container) flex h-14 w-full items-center justify-center gap-2 rounded-xl text-sm font-extrabold transition-transform hover:-translate-y-0.5"
+                  className="bg-(--secondary-container) text-(--on-secondary-container) hidden h-14 w-full items-center justify-center gap-2 rounded-xl text-sm font-extrabold transition-transform hover:-translate-y-0.5 lg:flex"
                 >
                   <span className="material-symbols-outlined">shopping_cart</span>
                   Ajouter au panier
