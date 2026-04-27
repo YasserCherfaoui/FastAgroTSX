@@ -5,7 +5,7 @@ import ProductCard from '../components/ProductCard'
 import { fetchCatalogueProduct, fetchCatalogueProducts } from '../lib/api'
 import { useCart } from '../lib/cart'
 import { trackViewContent } from '../lib/meta-pixel'
-import { formatDa, productToCatalogueCard } from '../models/product'
+import { type ProductSpecification, formatDa, productToCatalogueCard } from '../models/product'
 
 function productDetailQueryOptions(productId: number) {
   return queryOptions({
@@ -45,6 +45,31 @@ function isCompositionKey(key: string): boolean {
 function isStorageKey(key: string): boolean {
   return /(conservation|stockage|storage|shelf|dlc|dluo|temperature|temp|conditionnement)/.test(
     normalizeKey(key),
+  )
+}
+
+function ProductSpecRow({
+  specs,
+  className = '',
+}: {
+  specs: ProductSpecification[]
+  className?: string
+}) {
+  if (specs.length === 0) return null
+  return (
+    <div className={`flex min-w-0 flex-row flex-wrap gap-3 ${className}`.trim()}>
+      {specs.map((spec) => (
+        <div
+          key={spec.id}
+          className="bg-(--surface-container-low) min-w-0 flex-1 rounded-xl px-4 py-3"
+        >
+          <p className="m-0 text-[11px] font-bold tracking-[0.14em] uppercase">
+            {spec.spec_key}
+          </p>
+          <p className="m-0 mt-2 text-sm text-(--on-surface)">{spec.spec_value}</p>
+        </div>
+      ))}
+    </div>
   )
 }
 
@@ -254,23 +279,7 @@ function ProductDetailsPage() {
                 <h1 className="font-headline m-0 text-3xl leading-tight font-black tracking-[-0.03em] text-(--on-surface)">
                   {product.name}
                 </h1>
-                {extraSpecs.length > 0 ? (
-                  <div className="mt-3 flex min-w-0 flex-row flex-wrap gap-3">
-                    {extraSpecs.map((spec) => (
-                      <div
-                        key={spec.id}
-                        className="bg-(--surface-container-low) min-w-0 flex-1 rounded-xl px-4 py-3"
-                      >
-                        <p className="m-0 text-[11px] font-bold tracking-[0.14em] uppercase">
-                          {spec.spec_key}
-                        </p>
-                        <p className="m-0 mt-2 text-sm text-(--on-surface)">
-                          {spec.spec_value}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
+                <ProductSpecRow specs={extraSpecs} className="mt-3" />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
@@ -368,23 +377,7 @@ function ProductDetailsPage() {
               <h1 className="font-headline m-0 text-4xl leading-tight font-black tracking-[-0.03em] text-(--on-surface)">
                 {product.name}
               </h1>
-              {extraSpecs.length > 0 ? (
-                <div className="mt-4 flex min-w-0 flex-row flex-wrap gap-3">
-                  {extraSpecs.map((spec) => (
-                    <div
-                      key={spec.id}
-                      className="bg-(--surface-container-low) min-w-0 flex-1 rounded-xl px-4 py-3"
-                    >
-                      <p className="m-0 text-[11px] font-bold tracking-[0.14em] uppercase">
-                        {spec.spec_key}
-                      </p>
-                      <p className="m-0 mt-2 text-sm text-(--on-surface)">
-                        {spec.spec_value}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : null}
+              <ProductSpecRow specs={extraSpecs} className="mt-4" />
               <p className="text-(--on-surface-variant) mt-3 text-sm leading-6">
                 {product.description}
               </p>
