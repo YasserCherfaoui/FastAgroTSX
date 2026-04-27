@@ -254,6 +254,23 @@ function ProductDetailsPage() {
                 <h1 className="font-headline m-0 text-3xl leading-tight font-black tracking-[-0.03em] text-(--on-surface)">
                   {product.name}
                 </h1>
+                {extraSpecs.length > 0 ? (
+                  <div className="mt-3 flex min-w-0 flex-row flex-wrap gap-3">
+                    {extraSpecs.map((spec) => (
+                      <div
+                        key={spec.id}
+                        className="bg-(--surface-container-low) min-w-0 flex-1 rounded-xl px-4 py-3"
+                      >
+                        <p className="m-0 text-[11px] font-bold tracking-[0.14em] uppercase">
+                          {spec.spec_key}
+                        </p>
+                        <p className="m-0 mt-2 text-sm text-(--on-surface)">
+                          {spec.spec_value}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
@@ -339,23 +356,6 @@ function ProductDetailsPage() {
             <section className="pt-10">
               <div className="space-y-5 text-sm leading-7 text-(--on-surface-variant)">
                 <p>{product.description}</p>
-                {extraSpecs.length > 0 ? (
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {extraSpecs.map((spec) => (
-                      <div
-                        key={spec.id}
-                        className="bg-(--surface-container-low) rounded-xl px-4 py-3"
-                      >
-                        <p className="m-0 text-[11px] font-bold tracking-[0.14em] uppercase">
-                          {spec.spec_key}
-                        </p>
-                        <p className="m-0 mt-2 text-sm text-(--on-surface)">
-                          {spec.spec_value}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
               </div>
             </section>
           </section>
@@ -368,6 +368,23 @@ function ProductDetailsPage() {
               <h1 className="font-headline m-0 text-4xl leading-tight font-black tracking-[-0.03em] text-(--on-surface)">
                 {product.name}
               </h1>
+              {extraSpecs.length > 0 ? (
+                <div className="mt-4 flex min-w-0 flex-row flex-wrap gap-3">
+                  {extraSpecs.map((spec) => (
+                    <div
+                      key={spec.id}
+                      className="bg-(--surface-container-low) min-w-0 flex-1 rounded-xl px-4 py-3"
+                    >
+                      <p className="m-0 text-[11px] font-bold tracking-[0.14em] uppercase">
+                        {spec.spec_key}
+                      </p>
+                      <p className="m-0 mt-2 text-sm text-(--on-surface)">
+                        {spec.spec_value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
               <p className="text-(--on-surface-variant) mt-3 text-sm leading-6">
                 {product.description}
               </p>
