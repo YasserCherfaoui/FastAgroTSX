@@ -13,11 +13,11 @@ export default function ProductCard({ product, onAddToCart, isJustAdded = false 
   return (
     <article className="bg-(--surface-container-lowest) group overflow-hidden rounded-xl transition-all duration-300 hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)]">
       <Link to="/products/$productId" params={{ productId: product.id }} className="block no-underline">
-        <div className="relative h-56 overflow-hidden">
+        <div className="bg-(--surface-container-low) relative h-56 overflow-hidden">
           <img
             src={product.imageUrl}
             alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-contain"
           />
           <div className="absolute top-4 left-4 flex gap-2">
             {product.badges.map((badge) => (

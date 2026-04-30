@@ -255,7 +255,7 @@ function ProductDetailsPage() {
               <img
                 src={selectedImage}
                 alt={product.name}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
               />
               <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                 {product.best_seller ? (
@@ -355,7 +355,7 @@ function ProductDetailsPage() {
                     <img
                       src={imageUrl}
                       alt={`${product.name} visuel ${index + 1}`}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-contain"
                     />
                   </button>
                 ))}

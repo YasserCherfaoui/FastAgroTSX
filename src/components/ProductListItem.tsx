@@ -23,11 +23,11 @@ export default function ProductListItem({
         params={{ productId: product.id }}
         className="block shrink-0 no-underline"
       >
-        <div className="relative h-44 w-full overflow-hidden rounded-lg sm:h-32 sm:w-48">
+        <div className="bg-(--surface-container-low) relative h-44 w-full overflow-hidden rounded-lg sm:h-32 sm:w-48">
           <img
             src={product.imageUrl}
             alt={product.name}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain"
           />
           <div className="absolute top-2 left-2 flex flex-wrap gap-1">
             {product.badges.slice(0, 2).map((badge) => (

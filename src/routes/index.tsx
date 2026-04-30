@@ -93,7 +93,7 @@ function LandingBestSellerCard({ product: p }: { product: Product }) {
         <img
           src={imageUrl}
           alt={p.name}
-          className="h-48 w-full rounded-xl object-cover"
+          className="bg-(--surface-container-low) h-48 w-full rounded-xl object-contain"
         />
       </Link>
       <p className="mt-5 mb-1 text-xs font-bold tracking-[0.12em] text-[var(--on-surface-variant)] uppercase">
