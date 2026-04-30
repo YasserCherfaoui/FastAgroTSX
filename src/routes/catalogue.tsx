@@ -33,6 +33,7 @@ export const Route = createFileRoute('/catalogue')({
     return { brandId, page }
   },
   component: CataloguePage,
+  
 })
 
 const PAGE_SIZE = 12
