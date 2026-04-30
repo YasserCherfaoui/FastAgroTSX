@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ProductCard from '../components/ProductCard'
 import ProductListItem from '../components/ProductListItem'
 import { useDebouncedValue } from '../hooks/useDebouncedValue'
@@ -15,14 +15,22 @@ import { formatDa, productToCatalogueCard } from '../models/product'
 export const Route = createFileRoute('/catalogue')({
   validateSearch: (raw: Record<string, unknown>) => {
     const b = raw.brandId
+    const p = raw.page
     let brandId: number | undefined
+    let page: number | undefined
     if (typeof b === 'number' && Number.isFinite(b) && b > 0) {
       brandId = Math.floor(b)
     } else if (typeof b === 'string' && b !== '') {
       const n = Number.parseInt(b, 10)
       if (Number.isFinite(n) && n > 0) brandId = n
     }
-    return { brandId }
+    if (typeof p === 'number' && Number.isFinite(p) && p > 1) {
+      page = Math.floor(p)
+    } else if (typeof p === 'string' && p !== '') {
+      const n = Number.parseInt(p, 10)
+      if (Number.isFinite(n) && n > 1) page = n
+    }
+    return { brandId, page }
   },
   component: CataloguePage,
 })
@@ -38,10 +46,11 @@ function daToPriceCents(da: number): number {
 function CataloguePage() {
   const { addItem } = useCart()
   const navigate = useNavigate()
-  const { brandId: brandIdFromSearch } = Route.useSearch()
+  const { brandId: brandIdFromSearch, page: pageFromSearch } = Route.useSearch()
   const brandId = brandIdFromSearch != null && brandIdFromSearch > 0 ? brandIdFromSearch : null
+  const page = pageFromSearch ?? 1
   const [justAddedProductId, setJustAddedProductId] = useState<string | null>(null)
-  const [page, setPage] = useState(1)
+  const previousPageRef = useRef(page)
   const [searchInput, setSearchInput] = useState('')
   const debouncedSearch = useDebouncedValue(searchInput, 350)
   const [categoryId, setCategoryId] = useState<number | null>(null)
@@ -54,11 +63,31 @@ function CataloguePage() {
     (id: number | null) => {
       void navigate({
         to: '/catalogue',
-        search: (prev) => ({ ...prev, brandId: id ?? undefined }),
+        search: (prev) => ({ brandId: id ?? undefined, page: prev.page }),
       })
     },
     [navigate],
   )
+
+  const setPage = useCallback(
+    (next: number | ((current: number) => number)) => {
+      const current = pageFromSearch ?? 1
+      const raw = typeof next === 'function' ? next(current) : next
+      const normalized = Number.isFinite(raw) ? Math.max(1, Math.floor(raw)) : 1
+      if (normalized === current) return
+      void navigate({
+        to: '/catalogue',
+        search: (prev) => ({ brandId: prev.brandId, page: normalized > 1 ? normalized : undefined }),
+      })
+    },
+    [navigate, pageFromSearch],
+  )
+
+  useEffect(() => {
+    if (page === previousPageRef.current) return
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    previousPageRef.current = page
+  }, [page])
 
   const categoriesQuery = useQuery({
     queryKey: ['catalogue', 'categories'],
@@ -94,10 +123,15 @@ function CataloguePage() {
 
   const totalPages = productsQuery.data?.pagination.total_pages ?? 1
   useEffect(() => {
-    if (page > totalPages) {
-      setPage(Math.max(1, totalPages))
+    // Only clamp page when backend pagination is available.
+    // During refetches, query data can be temporarily undefined.
+    // Falling back to 1 in that moment would incorrectly reset user navigation.
+    const resolvedTotalPages = productsQuery.data?.pagination.total_pages
+    if (resolvedTotalPages == null) return
+    if (page > resolvedTotalPages) {
+      setPage(Math.max(1, resolvedTotalPages))
     }
-  }, [page, totalPages])
+  }, [page, productsQuery.data?.pagination.total_pages, setPage])
 
   const categories = useMemo(() => {
     const raw = categoriesQuery.data?.items ?? []
