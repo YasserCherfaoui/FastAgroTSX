@@ -138,10 +138,12 @@ export type CatalogueProductCard = {
 }
 
 export function formatDa(amountDa: number): string {
-  return `${new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-DZ', {
+    style: 'currency',
+    currency: 'DZD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amountDa)} DZD`
+  }).format(amountDa)
 }
 
 /** Foreground readable on top of a hex background (WCAG-ish luminance). */
