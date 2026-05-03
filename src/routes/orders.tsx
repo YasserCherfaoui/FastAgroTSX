@@ -1,9 +1,8 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
-import { requireAuthentication } from '../lib/auth-guards'
 
+/** Auth is enforced per child route (`/orders/`, `/orders/$orderId`). Guest checkout uses `/orders/success/$orderId` without login. */
 export const Route = createFileRoute('/orders')({
   ssr: false,
-  beforeLoad: () => requireAuthentication('/orders'),
   component: OrdersLayout,
 })
 

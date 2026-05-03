@@ -13,8 +13,7 @@ import {
   fetchCatalogueCountries,
   fetchCatalogueStates,
 } from '../lib/api'
-import { getAuthUser } from '../lib/auth-session'
-import { requireAuthentication } from '../lib/auth-guards'
+import { getAuthToken, getAuthUser } from '../lib/auth-session'
 import { getActiveCartTier, useCart } from '../lib/cart'
 import { trackInitiateCheckout } from '../lib/meta-pixel'
 import { formatShippingLine } from '../lib/logistics-label'
@@ -28,17 +27,23 @@ type ShippingForm = {
   contactPerson: string
   phone: string
   instructions: string
+  customerName: string
+  customerEmail: string
+  companyName: string
 }
+
+const ORDER_CONFIRM_STORAGE_PREFIX = 'fastagro_order_confirm_'
 
 export const Route = createFileRoute('/checkout')({
   ssr: false,
-  beforeLoad: () => requireAuthentication('/checkout'),
   component: CheckoutPage,
 })
 
 function CheckoutPage() {
   const navigate = useNavigate()
   const { items, clearCart } = useCart()
+  /** When true, cart was cleared after a successful order — do not bounce to /cart (would race thank-you navigation). */
+  const blockEmptyCartRedirectRef = useRef(false)
   const authUser = getAuthUser()
   const [form, setForm] = useState<ShippingForm>(() => ({
     countryId: authUser?.country_id ?? 0,
@@ -48,6 +53,9 @@ function CheckoutPage() {
     contactPerson: authUser?.full_name || '',
     phone: authUser?.phone || '',
     instructions: '',
+    customerName: authUser?.full_name || '',
+    customerEmail: authUser?.email || '',
+    companyName: authUser?.company_name || '',
   }))
 
   const countriesQuery = useQuery({
@@ -103,16 +111,26 @@ function CheckoutPage() {
   const orderMutation = useMutation({
     mutationFn: createOrderRequest,
     onSuccess: async (order) => {
+      blockEmptyCartRedirectRef.current = true
       clearCart()
+      try {
+        window.sessionStorage.setItem(
+          `${ORDER_CONFIRM_STORAGE_PREFIX}${order.id}`,
+          JSON.stringify(order),
+        )
+      } catch {
+        /* private mode */
+      }
       await navigate({
         to: '/orders/success/$orderId',
         params: { orderId: String(order.id) },
+        state: { order } as Record<string, unknown>,
       })
     },
   })
 
   useEffect(() => {
-    if (items.length === 0) {
+    if (items.length === 0 && !blockEmptyCartRedirectRef.current) {
       void navigate({ to: '/cart' })
     }
   }, [items.length, navigate])
@@ -131,13 +149,19 @@ function CheckoutPage() {
     form.countryId <= 0 ||
     (!statesQuery.isLoading && !statesQuery.isError)
 
+  const isAuthed = !!getAuthToken()
+  const guestIdentityOk =
+    isAuthed ||
+    (form.customerName.trim() !== '' &&
+      form.customerEmail.trim() !== '')
   const canPlaceOrder =
     items.length > 0 &&
     countriesReady &&
     form.countryId > 0 &&
     form.stateId > 0 &&
     statesReadyForCountry &&
-    !!selectedState
+    !!selectedState &&
+    guestIdentityOk
 
   const summary = useMemo(() => {
     const subtotal = items.reduce((sum, item) => {
@@ -193,6 +217,9 @@ function CheckoutPage() {
         contact_person: form.contactPerson.trim(),
         phone: form.phone.trim(),
         instructions: form.instructions.trim(),
+        customer_name: form.customerName.trim(),
+        customer_email: form.customerEmail.trim(),
+        company_name: form.companyName.trim(),
         items: items.map((item) => ({
           product_id: item.productId,
           quantity: item.quantity,
@@ -230,6 +257,39 @@ function CheckoutPage() {
               </div>
 
               <div className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <Field label="Full name">
+                    <input
+                      type="text"
+                      value={form.customerName}
+                      onChange={(event) => updateField('customerName', event.target.value)}
+                      className="checkout-input"
+                      placeholder="Name on the order"
+                      required
+                    />
+                  </Field>
+                  <Field label="Email">
+                    <input
+                      type="email"
+                      value={form.customerEmail}
+                      onChange={(event) => updateField('customerEmail', event.target.value)}
+                      className="checkout-input"
+                      placeholder="you@company.dz"
+                      required
+                    />
+                  </Field>
+                </div>
+
+                <Field label="Company / raison sociale (optional)">
+                  <input
+                    type="text"
+                    value={form.companyName}
+                    onChange={(event) => updateField('companyName', event.target.value)}
+                    className="checkout-input"
+                    placeholder="Legal entity or store name"
+                  />
+                </Field>
+
                 <div className="grid gap-6 md:grid-cols-2">
                   <Field label="Country">
                     <select
@@ -447,8 +507,9 @@ function CheckoutPage() {
               <div className="mt-8 flex flex-col gap-4">
                 {!canPlaceOrder && items.length > 0 ? (
                   <p className="text-(--error) m-0 text-center text-xs leading-relaxed" role="status">
-                    Select a country and a wilaya (delivery zone) before confirming your
-                    order.
+                    {!guestIdentityOk && !isAuthed
+                      ? 'Enter your name and email, then select country and wilaya before confirming.'
+                      : 'Select a country and a wilaya (delivery zone) before confirming your order.'}
                   </p>
                 ) : null}
                 <button

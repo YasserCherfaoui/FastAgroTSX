@@ -312,13 +312,6 @@ function CartPage() {
                   type="button"
                   disabled={!canProceedToCheckout}
                   onClick={() => {
-                    if (!getAuthToken()) {
-                      void navigate({
-                        to: '/login',
-                        search: { redirect: '/checkout' },
-                      })
-                      return
-                    }
                     if (!canProceedToCheckout) return
                     void navigate({ to: '/checkout' })
                   }}

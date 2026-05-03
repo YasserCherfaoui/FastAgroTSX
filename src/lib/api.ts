@@ -272,6 +272,10 @@ export type CreateOrderRequest = {
   contact_person: string
   phone: string
   instructions?: string
+  /** Required for guest checkout; ignored server-side when authenticated. */
+  customer_name?: string
+  customer_email?: string
+  company_name?: string
   items: Array<{
     product_id: number
     quantity: number
@@ -299,7 +303,7 @@ export type OrderItem = {
 export type Order = {
   id: number
   order_number: string
-  user_id: number
+  user_id?: number | null
   customer_name: string
   company_name: string
   customer_email: string

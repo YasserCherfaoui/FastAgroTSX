@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { fetchMyOrders } from '../lib/api'
+import { requireAuthentication } from '../lib/auth-guards'
 import { formatDa } from '../models/product'
 
 export const Route = createFileRoute('/orders/')({
   ssr: false,
+  beforeLoad: () => requireAuthentication('/orders'),
   component: OrdersIndexPage,
 })
 
