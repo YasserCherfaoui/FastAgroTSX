@@ -11,6 +11,7 @@ import {
 import {
   createOrderRequest,
   fetchCatalogueCountries,
+  fetchCatalogueMinimumOrder,
   fetchCatalogueStates,
 } from '../lib/api'
 import { getAuthToken, getAuthUser } from '../lib/auth-session'
@@ -68,6 +69,10 @@ function CheckoutPage() {
     queryKey: ['catalogue', 'geo', 'states', countryId],
     queryFn: () => fetchCatalogueStates(countryId),
     enabled: countryId > 0,
+  })
+  const minimumOrderQuery = useQuery({
+    queryKey: ['catalogue', 'settings', 'minimum-order'],
+    queryFn: fetchCatalogueMinimumOrder,
   })
 
   // Prefill country from profile only (no default first country).
@@ -188,6 +193,12 @@ function CheckoutPage() {
       total: subtotal + logisticsFee + taxes,
     }
   }, [items, selectedState])
+  const minimumOrderDa = Math.max(
+    0,
+    Math.round((minimumOrderQuery.data?.minimum_order_cents ?? 0) / 100),
+  )
+  const minimumOrderReached = summary.subtotal >= minimumOrderDa
+  const canPlaceOrderWithMinimum = canPlaceOrder && minimumOrderReached
 
   const initiateCheckoutTracked = useRef(false)
   useEffect(() => {
@@ -208,7 +219,7 @@ function CheckoutPage() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (!canPlaceOrder) return
+    if (!canPlaceOrderWithMinimum) return
     try {
       await orderMutation.mutateAsync({
         state_id: form.stateId,
@@ -505,9 +516,11 @@ function CheckoutPage() {
               </div>
 
               <div className="mt-8 flex flex-col gap-4">
-                {!canPlaceOrder && items.length > 0 ? (
+                {!canPlaceOrderWithMinimum && items.length > 0 ? (
                   <p className="text-(--error) m-0 text-center text-xs leading-relaxed" role="status">
-                    {!guestIdentityOk && !isAuthed
+                    {!minimumOrderReached
+                      ? `Minimum order subtotal is ${formatDa(minimumOrderDa)}.`
+                      : !guestIdentityOk && !isAuthed
                       ? 'Enter your name and email, then select country and wilaya before confirming.'
                       : 'Select a country and a wilaya (delivery zone) before confirming your order.'}
                   </p>
@@ -515,7 +528,7 @@ function CheckoutPage() {
                 <button
                   type="submit"
                   form="checkout-form"
-                  disabled={orderMutation.isPending || !canPlaceOrder}
+                  disabled={orderMutation.isPending || !canPlaceOrderWithMinimum}
                   className="text-(--on-primary) flex h-16 w-full items-center justify-center gap-3 rounded-lg bg-[linear-gradient(120deg,var(--primary),var(--primary-container))] text-sm font-black tracking-[0.16em] uppercase disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {orderMutation.isPending ? 'Submitting Order' : 'Confirm Order'}

@@ -1,8 +1,10 @@
 import { useEffect, useId, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link, useRouterState } from '@tanstack/react-router'
 
 import { cn } from '../lib/utils'
 import { useCart } from '../lib/cart'
+import { fetchCatalogueMinimumOrder } from '../lib/api'
 
 import AuthNavActions from './AuthNavActions'
 
@@ -11,6 +13,14 @@ export default function Header() {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const [mobileOpen, setMobileOpen] = useState(false)
   const drawerTitleId = useId()
+  const minimumOrderQuery = useQuery({
+    queryKey: ['catalogue', 'settings', 'minimum-order'],
+    queryFn: fetchCatalogueMinimumOrder,
+  })
+  const minimumOrderDa = Math.max(
+    0,
+    Math.round((minimumOrderQuery.data?.minimum_order_cents ?? 0) / 100),
+  )
 
   const isCatalogue = pathname === '/catalogue'
   const isCart = pathname === '/cart' || pathname === '/checkout'
@@ -44,7 +54,7 @@ export default function Header() {
   return (
     <>
       <div className="bg-(--secondary-container) text-(--on-secondary-container) px-4 py-2 text-center text-[10px] font-bold tracking-[0.14em] uppercase sm:px-8 sm:text-xs">
-        Livraison nationale | Min. commande: 50 000 DA
+        Livraison nationale | Min. commande: {minimumOrderDa.toLocaleString('fr-FR')} DA
       </div>
       <header className="sticky top-0 z-50 px-4 shadow-[0_4px_20px_-5px_rgba(0,0,0,0.06)] backdrop-blur-xl">
         {/* Mobile: menu + logo + cart only */}

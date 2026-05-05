@@ -120,6 +120,10 @@ export type CatalogueState = {
   shipping_cents: number
 }
 
+export type CatalogueMinimumOrderResponse = {
+  minimum_order_cents: number
+}
+
 export async function fetchCatalogueCountries(): Promise<{ items: CatalogueCountry[] }> {
   const res = await fetch(`${getApiBaseUrl()}/api/v1/catalogue/geo/countries`)
   if (!res.ok) throw new Error(await readApiError(res))
@@ -134,6 +138,12 @@ export async function fetchCatalogueStates(
   )
   if (!res.ok) throw new Error(await readApiError(res))
   return res.json() as Promise<{ items: CatalogueState[] }>
+}
+
+export async function fetchCatalogueMinimumOrder(): Promise<CatalogueMinimumOrderResponse> {
+  const res = await fetch(`${getApiBaseUrl()}/api/v1/catalogue/settings/minimum-order`)
+  if (!res.ok) throw new Error(await readApiError(res))
+  return res.json() as Promise<CatalogueMinimumOrderResponse>
 }
 
 export async function registerRequest(body: RegisterRequest): Promise<AuthResponse> {

@@ -1,7 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMemo } from 'react'
-import { fetchCatalogueCountries, fetchCatalogueStates } from '../lib/api'
+import {
+  fetchCatalogueCountries,
+  fetchCatalogueMinimumOrder,
+  fetchCatalogueStates,
+} from '../lib/api'
 import { getAuthToken, getAuthUser } from '../lib/auth-session'
 import { getActiveCartTier, useCart } from '../lib/cart'
 import { formatShippingLine } from '../lib/logistics-label'
@@ -26,6 +30,10 @@ function CartPage() {
     queryKey: ['catalogue', 'geo', 'states', countryId],
     queryFn: () => fetchCatalogueStates(countryId),
     enabled: countryId > 0,
+  })
+  const minimumOrderQuery = useQuery({
+    queryKey: ['catalogue', 'settings', 'minimum-order'],
+    queryFn: fetchCatalogueMinimumOrder,
   })
 
   const states = statesQuery.data?.items ?? []
@@ -87,10 +95,16 @@ function CartPage() {
     userDeliveryZoneInvalid,
   ])
 
+  const minimumOrderDa = Math.max(
+    0,
+    Math.round((minimumOrderQuery.data?.minimum_order_cents ?? 0) / 100),
+  )
+  const minimumOrderReached = summary.subtotal >= minimumOrderDa
   const canProceedToCheckout =
     items.length > 0 &&
     !userDeliveryZoneInvalid &&
-    !waitingForGeoToValidateUser
+    !waitingForGeoToValidateUser &&
+    minimumOrderReached
 
   return (
     <main className="bg-(--surface) text-(--on-surface) min-h-screen px-6 py-12 md:py-20 lg:px-8">
@@ -307,6 +321,14 @@ function CartPage() {
                   <p className="text-(--on-surface-variant) m-0 text-center text-xs">
                     Verification de votre zone de livraison...
                   </p>
+                ) : null}
+                {items.length > 0 && !minimumOrderReached ? (
+                  <div
+                    className="bg-[color-mix(in_oklab,var(--error)_12%,white)] text-(--error) rounded-lg px-4 py-3 text-sm leading-relaxed"
+                    role="alert"
+                  >
+                    Montant minimum de commande: {formatDa(minimumOrderDa)} (sous-total).
+                  </div>
                 ) : null}
                 <button
                   type="button"
