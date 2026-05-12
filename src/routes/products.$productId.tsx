@@ -165,6 +165,7 @@ function ProductDetailsPage() {
 
   const totalEstimateDa = activeTier ? centsToDa(activeTier.price_cents) * quantity : 0
   const productCard = product ? productToCatalogueCard(product) : null
+  const outOfStock = productCard?.outOfStock ?? false
 
   const extraSpecs = useMemo(
     () =>
@@ -184,7 +185,7 @@ function ProductDetailsPage() {
   )
 
   const handleAddToCart = () => {
-    if (!productCard) return
+    if (!productCard || outOfStock) return
     for (let index = 0; index < quantity; index += 1) {
       addItem(productCard)
     }
@@ -192,6 +193,7 @@ function ProductDetailsPage() {
   }
 
   const handleOrderNow = () => {
+    if (outOfStock) return
     handleAddToCart()
     void navigate({ to: '/checkout' })
   }
@@ -293,7 +295,8 @@ function ProductDetailsPage() {
                     <button
                       type="button"
                       onClick={() => setQuantity((value) => Math.max(1, value - 1))}
-                      className="hover:bg-(--surface-container-highest) h-full px-4 transition-colors"
+                      disabled={outOfStock}
+                      className="hover:bg-(--surface-container-highest) h-full px-4 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <span className="material-symbols-outlined text-sm">remove</span>
                     </button>
@@ -302,6 +305,7 @@ function ProductDetailsPage() {
                       type="number"
                       min={1}
                       value={quantity}
+                      disabled={outOfStock}
                       onChange={(e) =>
                         setQuantity(Math.max(1, Number.parseInt(e.target.value || '1', 10) || 1))
                       }
@@ -310,7 +314,8 @@ function ProductDetailsPage() {
                     <button
                       type="button"
                       onClick={() => setQuantity((value) => value + 1)}
-                      className="hover:bg-(--surface-container-highest) h-full px-4 transition-colors"
+                      disabled={outOfStock}
+                      className="hover:bg-(--surface-container-highest) h-full px-4 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <span className="material-symbols-outlined text-sm">add</span>
                     </button>
@@ -332,10 +337,11 @@ function ProductDetailsPage() {
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="bg-(--secondary-container) text-(--on-secondary-container) flex h-14 w-full items-center justify-center gap-2 rounded-xl text-sm font-extrabold transition-transform hover:-translate-y-0.5"
+                disabled={outOfStock}
+                className="bg-(--secondary-container) text-(--on-secondary-container) flex h-14 w-full items-center justify-center gap-2 rounded-xl text-sm font-extrabold transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
                 <span className="material-symbols-outlined">shopping_cart</span>
-                Ajouter au panier
+                {outOfStock ? 'Rupture de stock' : 'Ajouter au panier'}
               </button>
             </section>
 
@@ -454,7 +460,8 @@ function ProductDetailsPage() {
                     <button
                       type="button"
                       onClick={() => setQuantity((value) => Math.max(1, value - 1))}
-                      className="hover:bg-(--surface-container-highest) h-full px-4 transition-colors"
+                      disabled={outOfStock}
+                      className="hover:bg-(--surface-container-highest) h-full px-4 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <span className="material-symbols-outlined text-sm">remove</span>
                     </button>
@@ -463,6 +470,7 @@ function ProductDetailsPage() {
                       type="number"
                       min={1}
                       value={quantity}
+                      disabled={outOfStock}
                       onChange={(e) =>
                         setQuantity(Math.max(1, Number.parseInt(e.target.value || '1', 10) || 1))
                       }
@@ -471,7 +479,8 @@ function ProductDetailsPage() {
                     <button
                       type="button"
                       onClick={() => setQuantity((value) => value + 1)}
-                      className="hover:bg-(--surface-container-highest) h-full px-4 transition-colors"
+                      disabled={outOfStock}
+                      className="hover:bg-(--surface-container-highest) h-full px-4 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <span className="material-symbols-outlined text-sm">add</span>
                     </button>
@@ -495,18 +504,20 @@ function ProductDetailsPage() {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="bg-(--secondary-container) text-(--on-secondary-container) hidden h-14 w-full items-center justify-center gap-2 rounded-xl text-sm font-extrabold transition-transform hover:-translate-y-0.5 lg:flex"
+                  disabled={outOfStock}
+                  className="bg-(--secondary-container) text-(--on-secondary-container) hidden h-14 w-full items-center justify-center gap-2 rounded-xl text-sm font-extrabold transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 lg:flex"
                 >
                   <span className="material-symbols-outlined">shopping_cart</span>
-                  Ajouter au panier
+                  {outOfStock ? 'Rupture de stock' : 'Ajouter au panier'}
                 </button>
                 <button
                   type="button"
                   onClick={handleOrderNow}
-                  className="text-primary border-primary flex h-14 w-full items-center justify-center gap-2 rounded-xl border-2 text-sm font-extrabold transition-colors hover:bg-[color-mix(in_oklab,var(--primary)_8%,transparent)]"
+                  disabled={outOfStock}
+                  className="text-primary border-primary flex h-14 w-full items-center justify-center gap-2 rounded-xl border-2 text-sm font-extrabold transition-colors hover:bg-[color-mix(in_oklab,var(--primary)_8%,transparent)] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <span className="material-symbols-outlined">bolt</span>
-                  Commander directement
+                  {outOfStock ? 'Rupture de stock' : 'Commander directement'}
                 </button>
                 {justAdded ? (
                   <p className="text-primary m-0 text-center text-xs font-bold tracking-[0.12em] uppercase">

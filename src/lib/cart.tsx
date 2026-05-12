@@ -73,6 +73,7 @@ export function CartProvider({ children }: PropsWithChildren) {
   }, [items])
 
   const addItem = useCallback((product: CatalogueProductCard) => {
+    if (product.outOfStock) return
     const productId = Number(product.id)
     if (!Number.isFinite(productId) || productId < 1) return
     setItems((current) => {

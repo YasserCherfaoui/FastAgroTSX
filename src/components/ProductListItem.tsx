@@ -15,6 +15,12 @@ export default function ProductListItem({
   isJustAdded = false,
 }: ProductListItemProps) {
   const highlightTier = product.priceTiers.find((t) => t.highlighted) ?? product.priceTiers[0]
+  const stockDotClass =
+    product.stockTone === 'unavailable'
+      ? 'bg-(--outline)'
+      : product.stockTone === 'secondary'
+        ? 'bg-secondary'
+        : 'bg-primary'
 
   return (
     <article className="bg-(--surface-container-lowest) flex flex-col gap-4 rounded-xl p-4 shadow-sm transition-shadow hover:shadow-md sm:flex-row sm:items-stretch">
@@ -71,9 +77,7 @@ export default function ProductListItem({
         <div className="text-(--on-surface-variant) flex flex-wrap items-center gap-2 text-xs">
           <span className="flex items-center gap-1">
             <span
-              className={`h-1.5 w-1.5 rounded-full ${
-                product.stockTone === 'secondary' ? 'bg-secondary' : 'bg-primary'
-              }`}
+              className={`h-1.5 w-1.5 rounded-full ${stockDotClass}`}
             />
             {product.stockLabel}
           </span>
@@ -87,9 +91,14 @@ export default function ProductListItem({
           <button
             type="button"
             onClick={() => onAddToCart?.(product)}
-            className="bg-(--on-surface) text-(--surface) hover:bg-primary hover:text-(--on-primary) w-full rounded-lg py-3 text-sm font-bold transition-colors"
+            disabled={product.outOfStock}
+            className={`w-full rounded-lg py-3 text-sm font-bold transition-colors ${
+              product.outOfStock
+                ? 'bg-(--surface-container-high) text-(--on-surface-variant) cursor-not-allowed'
+                : 'bg-(--on-surface) text-(--surface) hover:bg-primary hover:text-(--on-primary)'
+            }`}
           >
-            Ajouter au panier
+            {product.outOfStock ? 'Rupture de stock' : 'Ajouter au panier'}
           </button>
           {isJustAdded ? (
             <p className="text-primary m-0 text-center text-[11px] font-bold tracking-[0.08em] uppercase">

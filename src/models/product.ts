@@ -81,6 +81,7 @@ export type Product = {
   /** Weight per unit in kilograms (logistics, purchase summary). */
   weight_kg?: number
   best_seller?: boolean
+  out_of_stock?: boolean
   category_id?: number | null
   category?: Category | null
   created_at: string
@@ -103,7 +104,7 @@ export type ProductListResponse = {
 }
 
 export type ProductBadgeTone = 'primary' | 'secondary' | 'neutral'
-export type ProductStockTone = 'primary' | 'secondary'
+export type ProductStockTone = 'primary' | 'secondary' | 'unavailable'
 
 export type ProductBadge = {
   label: string
@@ -126,6 +127,7 @@ export type CatalogueProductCard = {
   name: string
   badges: ProductBadge[]
   priceTiers: ProductPriceTier[]
+  outOfStock: boolean
   stockLabel: string
   shippingLabel: string
   stockTone: ProductStockTone
@@ -234,6 +236,8 @@ export function productToCatalogueCard(p: Product): CatalogueProductCard {
       ? p.weight_kg
       : 1
 
+  const outOfStock = p.out_of_stock === true
+
   return {
     id: String(p.id),
     imageUrl,
@@ -241,9 +245,10 @@ export function productToCatalogueCard(p: Product): CatalogueProductCard {
     name: p.name,
     badges: badges.slice(0, 3),
     priceTiers,
-    stockLabel: 'Disponible',
+    outOfStock,
+    stockLabel: outOfStock ? 'Rupture de stock' : 'Disponible',
     shippingLabel: 'Livraison B2B',
-    stockTone: 'primary',
+    stockTone: outOfStock ? 'unavailable' : 'primary',
     unitLabel: inferUnitLabel(p),
     unitWeightKg,
     taxRateBps,

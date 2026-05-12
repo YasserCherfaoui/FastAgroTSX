@@ -10,6 +10,13 @@ type ProductCardProps = {
 }
 
 export default function ProductCard({ product, onAddToCart, isJustAdded = false }: ProductCardProps) {
+  const stockDotClass =
+    product.stockTone === 'unavailable'
+      ? 'bg-(--outline)'
+      : product.stockTone === 'secondary'
+        ? 'bg-secondary'
+        : 'bg-primary'
+
   return (
     <article className="bg-(--surface-container-lowest) group overflow-hidden rounded-xl transition-all duration-300 hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)]">
       <Link to="/products/$productId" params={{ productId: product.id }} className="block no-underline">
@@ -75,9 +82,7 @@ export default function ProductCard({ product, onAddToCart, isJustAdded = false 
         <div className="text-(--on-surface-variant) flex items-center gap-3 text-xs">
           <div className="flex items-center gap-1">
             <span
-              className={`h-1.5 w-1.5 rounded-full ${
-                product.stockTone === 'secondary' ? 'bg-secondary' : 'bg-primary'
-              }`}
+              className={`h-1.5 w-1.5 rounded-full ${stockDotClass}`}
             />
             <span>{product.stockLabel}</span>
           </div>
@@ -87,10 +92,15 @@ export default function ProductCard({ product, onAddToCart, isJustAdded = false 
         <button
           type="button"
           onClick={() => onAddToCart?.(product)}
-            className="bg-(--on-surface) text-(--surface) hover:bg-primary hover:text-(--on-primary) flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-bold transition-colors"
+          disabled={product.outOfStock}
+          className={`flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-bold transition-colors ${
+            product.outOfStock
+              ? 'bg-(--surface-container-high) text-(--on-surface-variant) cursor-not-allowed'
+              : 'bg-(--on-surface) text-(--surface) hover:bg-primary hover:text-(--on-primary)'
+          }`}
         >
           <span className="material-symbols-outlined text-sm">shopping_cart</span>
-          Ajouter au panier
+          {product.outOfStock ? 'Rupture de stock' : 'Ajouter au panier'}
         </button>
         {isJustAdded ? (
           <p className="text-primary m-0 -mt-2 text-xs font-bold tracking-[0.08em] uppercase">
