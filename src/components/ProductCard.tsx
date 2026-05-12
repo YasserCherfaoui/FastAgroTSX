@@ -19,6 +19,11 @@ export default function ProductCard({ product, onAddToCart, isJustAdded = false 
 
   return (
     <article className="bg-(--surface-container-lowest) group overflow-hidden rounded-xl transition-all duration-300 hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)]">
+      {product.outOfStock ? (
+        <p className="bg-(--surface-container-highest) text-(--on-surface-variant) m-0 px-4 py-2 text-center text-[10px] font-bold tracking-[0.14em] uppercase">
+          Non disponible
+        </p>
+      ) : null}
       <Link to="/products/$productId" params={{ productId: product.id }} className="block no-underline">
         <div className="bg-(--surface-container-low) relative h-56 overflow-hidden">
           <img
